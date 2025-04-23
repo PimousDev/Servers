@@ -1,0 +1,7 @@
+label: gpt
+unit: sectors
+sector-size: 512
+first-lba: 2048
+last-lba: 524287966
+
+start=2048, size=524285919, type=933AC7E1-2EB4-4F13-B844-0E14E2AEF915
