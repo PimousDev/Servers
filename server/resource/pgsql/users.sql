@@ -1,0 +1,3 @@
+CREATE USER xibitol
+	PASSWORD NULL
+	IN ROLE Admin;

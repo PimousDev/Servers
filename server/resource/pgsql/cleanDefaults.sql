@@ -1,0 +1,5 @@
+ALTER DATABASE template0 IS_TEMPLATE false;
+DROP DATABASE template0;
+
+ALTER DATABASE template1 IS_TEMPLATE false;
+DROP DATABASE template1;
