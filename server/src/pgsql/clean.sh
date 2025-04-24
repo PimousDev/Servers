@@ -21,4 +21,4 @@ source "$SCRIPT_DIR"/config.sh
 
 # ---
 echo "# DELETING CONTAINER VOLUMES ($DOCKER_CONTAINER_NAME) ..."
-docker volume rm -f $DOCKER_VOLUME_NAME
+docker volume rm -f $DOCKER_DATA_VOLUME_NAME $DOCKER_LOG_VOLUME_NAME

@@ -1,3 +1,4 @@
+#!/bin/bash
 # Pimous Servers (Scripts and Docker files)
 # Copyright &copy; 2025 - Pimous Dev. (https://www.pimous.dev/)
 #
@@ -14,26 +15,16 @@
 # No copy of the license is bundled with the script (As it is posted in a GitHub
 # gist). Please see https://www.gnu.org/licenses/.
 
-FROM postgres:17.4-alpine3.21
+SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
-ENV PGUSER=postgres
-ENV PGHOME=/var/lib/postgresql
-ENV PGCONFIG=/etc/postgresql
-ENV ENTRYPOINT_DIR=/docker-entrypoint-initdb.d
-ENV PGLOG=/var/log/postgresql
+source "$SCRIPT_DIR"/config.sh
 
-RUN mkdir -p $PGCONFIG $PGLOG
-RUN chown -R $PGUSER:$PGUSER $PGLOG
+LOGS_ARCHIVE="$DOCKER_LOG_VOLUME_NAME"s_"$(date +%Y-%m-%d_%H%M%S)".tar
 
-COPY --chown=$PGUSER:$PGUSER --chmod=0600 *.crt *.key $PGHOME
-
-COPY postgresql.conf $PGCONFIG
-COPY pg_hba.conf $PGCONFIG
-
-COPY *.sql *.sh $ENTRYPOINT_DIR
-
-CMD ["postgres", \
-	"-debug", \
-	"-c", "config_file=/etc/postgresql/postgresql.conf", \
-	"-c", "hba_file=/etc/postgresql/pg_hba.conf" \
-]
+# ---
+echo "# EXPORTING LOGS TO $LOGS_ARCHIVE ($DOCKER_LOG_VOLUME_NAME VOLUME) ..."
+docker run \
+	-v "$(pwd)":/export -v $DOCKER_LOG_VOLUME_NAME:/var/log/postgresql/ \
+	--rm \
+	alpine:3.21 \
+	tar -cv -f /export/"$LOGS_ARCHIVE" /var/log/postgresql/
