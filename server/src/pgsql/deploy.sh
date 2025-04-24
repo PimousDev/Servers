@@ -35,7 +35,7 @@ echo "# CREATING VOLUME ($DOCKER_VOLUME_NAME) ..."
 docker volume create $DOCKER_VOLUME_NAME
 
 echo "# RUNNING CONTAINER ($DOCKER_CONTAINER_NAME; With image $DOCKER_IMAGE_REFERENCE) ..."
-docker run -it \
+docker run \
 	-e POSTGRES_PASSWORD=empty \
 	-v $DOCKER_VOLUME_NAME:/var/lib/postgresql/data \
 	-p $EXPOSED_PORT:5432 \
