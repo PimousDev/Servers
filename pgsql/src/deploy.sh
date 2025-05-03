@@ -21,7 +21,7 @@ source "$SCRIPT_DIR"/config.sh
 
 # ---
 mode=${1-"prod"}
-resourceDir=${2-"$SCRIPT_DIR/../resource/pgsql"}
+resourceDir=${2-"$SCRIPT_DIR/../resource"}
 
 # ---
 echo "# STOPPING CONTAINER ($DOCKER_CONTAINER_NAME) ..."
