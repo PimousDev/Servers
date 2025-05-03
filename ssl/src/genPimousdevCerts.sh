@@ -15,61 +15,63 @@
 # No copy of the license is bundled with the script (As it is posted in a GitHub
 # gist). Please see https://www.gnu.org/licenses/.
 #-------------------------------------------------------------------------------
-# Generates all Pimous Dev. CA, Service and User certificates using
-# createCert.sh script.
+# Generates all Pimous Dev. CA, Service and User certificates using our ssl.sh
+# helper script.
 #
 # @throw 1 Unkown error.
 # @throw 2 Bad usage.
-# @throw 3 No such script createCert.sh.
+# @throw 3 No such script ssl.sh.
 #-------------------------------------------------------------------------------
 
 # ---
 if [[ ! $# -eq 1 ]]; then
-	echo "Usage: genPimousdevCerts.sh <createCert.sh path>" 1>&2
+	echo "Usage: genPimousdevCerts.sh <ssl.sh path>" 1>&2
 	exit 2
 fi
 
-createCertScript=$(realpath "$1")
+sslScript=$(realpath "$1")
 
-if [[ ! -f $createCertScript ]]; then
-	echo "No such script $createCertScript;"
+if [[ ! -f $sslScript ]]; then
+	echo "No such script $sslScript;"
 	exit 3
 fi
 
-createCert(){
-	bash "$createCertScript" "${@}"
+ssl(){
+	bash "$sslScript" "$@"
 }
 
 # ---
 echo "## ROOT CA pimousdev"
-createCert pimousdev Root
+ssl req pimousdev Root
+ssl sign pimousdev
 
 ## Databases
 echo "## DATABASE CA pimousdev-db AND SERVICES"
 mkdir db
 cd db || exit 1
 
-createCert pimousdev-db Database db ../pimousdev
+ssl req pimousdev-db Database db
+ssl sign pimousdev-db ../pimousdev --ca
 
 ### PostgreSQL
 mkdir pgsql
 cd pgsql || exit 1
-createCert s0-ps-pgsql Service ../pimousdev-db
+ssl req s0-ps-pgsql Service ../pimousdev-db
+ssl sign s0-ps-pgsql ../pimousdev-db
 cd .. || exit 1
 
 cd .. || exit 1
 
 ## Users
-echo "## USR CA pimousdev-usr AND USERS"
+echo "## USR CA pimousdev-usr"
 mkdir usr
 cd usr || exit 1
 
-createCert pimousdev-usr Usr usr ../pimousdev
-
-### Xibitol
-mkdir xibitol
-cd xibitol || exit 1
-createCert xibitol User ../pimousdev-usr xibitol@pimous.dev
-cd .. || exit 1
+ssl req pimousdev-usr Usr usr
+ssl sign pimousdev-usr ../pimousdev --ca
 
 cd .. || exit 1
+
+# ---
+echo "## REMOVING *.csr FILES"
+find ./ -name "*.csr" -type f -exec rm -v {} \;
