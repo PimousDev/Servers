@@ -79,6 +79,7 @@ createRequest(){
 		st=$4
 		l=$5
 		o=$6
+  		cn=$name
 		emailAddress=$7
 	else
 		case $ou in
