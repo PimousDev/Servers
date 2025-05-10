@@ -88,7 +88,18 @@
 				"policies": [{
 					"issuers": [{
 						"module": "acme",
-						"email": "pro@pimous.dev"
+						"email": "pro@pimous.dev",
+						"challenges": {
+							"http": {"disabled": true},
+							"tls-alpn": {"disabled": true},
+							"dns": {
+								"provider":  {
+									"name": "infomaniak",
+									"api_token": "{file./etc/caddy/infomaniak_api-token}"
+								},
+								"ttl": "1h"
+							}
+						}
 					}]
 				}]
 			}

@@ -17,7 +17,8 @@
 FROM caddy:2.10.0-builder-alpine AS builder
 
 RUN xcaddy build \
-	--with github.com/caddyserver/jsonc-adapter
+	--with github.com/caddyserver/jsonc-adapter \
+	--with github.com/caddy-dns/infomaniak
 
 FROM caddy:2.10.0-alpine
 
@@ -26,7 +27,7 @@ ENV CYROOT=/usr/share/caddy
 
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 
-COPY Caddyfile.jsonc $CYCONFIG
+COPY Caddyfile.jsonc infomaniak_api-token $CYCONFIG
 
 CMD ["sh", "-c", \
 	"caddy run --config $CYCONFIG/Caddyfile.jsonc --adapter jsonc" \
