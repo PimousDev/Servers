@@ -16,7 +16,7 @@
 
 	"apps": {
 		"http": {"servers": {"Fallback": {
-			"listen": [":80", ":443"],
+			"listen": [":80"],
 
 			"routes": [
 				{ // Definitions and mapping.
@@ -68,6 +68,7 @@
 				},
 
 				{ // When the fallback's document root exists.
+					"group": "exit",
 					"match": [{
 						"not": [
 							{"vars": {"{folder}": ["whoami"]}}
@@ -91,6 +92,7 @@
 				},
 
 				{ // Matched to "whoami" or document root.
+					"group": "exit",
 					"handle": [{
 						"handler": "file_server",
 						"root": "{http.vars.publicDir}",
@@ -102,20 +104,6 @@
 			"logs": {
 				"default_logger_name": "default"
 			}
-		}}},
-
-		"tls": {
-			"certificates": {},
-
-			"automation": {
-				"policies": [{
-					"subjects": ["pimous.dev"],
-					"issuers": [{
-						"module": "acme",
-						"email": "pro@pimous.dev"
-					}]
-				}]
-			}
-		}
+		}}}
 	}
 }

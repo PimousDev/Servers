@@ -15,7 +15,7 @@
 # No copy of the license is bundled with the script (As it is posted in a GitHub
 # gist). Please see https://www.gnu.org/licenses/.
 
-LOG_MAX_SIZE=10m
+LOG_MAX_SIZE=10MiB
 LOG_MAX_FILE=10
 
 # ---

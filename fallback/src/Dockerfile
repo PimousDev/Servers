@@ -24,19 +24,14 @@ FROM caddy:2.10.0-alpine
 
 ENV CYCONFIG=/etc/caddy
 ENV CYROOT=/usr/share/caddy
-ENV CYLOG=/var/log/caddy
 
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 
-COPY Caddyfile.json $CYCONFIG
+COPY Caddyfile.jsonc $CYCONFIG
 
 RUN rm $CYROOT/index.html
 COPY sites $CYROOT
 
-RUN mkdir -p $CYLOG
-
-EXPOSE 31001
-
 CMD ["sh", "-c", \
-	"caddy run --config $CYCONFIG/Caddyfile.json --adapter jsonc" \
+	"caddy run --config $CYCONFIG/Caddyfile.jsonc --adapter jsonc" \
 ]
