@@ -17,6 +17,10 @@
 	"apps": {
 		"http": {"servers": {"Reproxy": {
 			"listen": [":80", ":443"],
+			"listener_wrappers": [
+				{"wrapper": "http_redirect"},
+				{"wrapper": "tls"}
+			],
 
 			"routes": [
 				{ // Definitions and mapping.
@@ -48,6 +52,11 @@
 
 				{ // Reverse proxy.
 					"group": "exit",
+					"match": [{
+						"host": [
+							"pimous.dev", "*.pimous.dev"
+						]
+					}],
 					"handle": [{
 						"handler": "reverse_proxy",
 						"transport": {
