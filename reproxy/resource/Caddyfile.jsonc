@@ -1,0 +1,97 @@
+{
+	"admin": {
+		"disabled": true
+	},
+
+	"logging": {
+		"sink": {
+			"writer": {"output": "stdout"}
+		},
+		"logs": {"default": {
+			"writer": {"output": "stdout"},
+			"encoder": {"format": "console"},
+			"level": "INFO"
+		}}
+	},
+
+	"apps": {
+		"http": {"servers": {"Reproxy": {
+			"listen": [":80", ":443"],
+
+			"routes": [
+				{ // Definitions and mapping.
+					"handle": [
+						{
+							"handler": "vars",
+							"serverName": "Pimous Dev. Reproxy"
+						},
+
+						{ // Mapping domain to their folder and handler.
+							"handler": "map",
+							"source": "{http.request.host}",
+							"destinations": ["{service}"],
+							"mappings": [
+							],
+							"defaults": ["fallback"]
+						},
+
+						{ // Our own Server header value.
+							"handler": "headers",
+							"response": {
+								"set": {
+									"Server": ["{http.vars.serverName}"]
+								}
+							}
+						}
+					]
+				},
+
+				{ // Reverse proxy.
+					"group": "exit",
+					"handle": [{
+						"handler": "reverse_proxy",
+						"transport": {
+							"protocol": "http"
+						},
+						"upstreams": [{"dial": "172.17.0.1:31001"}],
+						"dynamic_upstreams": {
+							"source": "srv",
+							"name": "pimous.dev",
+							"proto": "tcp",
+							"service": "{service}",
+							"resolver": {"addresses": [
+								"ns11.infomaniak.ch",
+								"ns12.infomaniak.ch"
+							]},
+							"refresh": "1m"
+						},
+						"headers": {
+							"response": {
+								"delete": ["Via"]
+							}
+						}
+					}]
+				}
+			],
+
+			"logs": {
+				"default_logger_name": "default"
+			}
+		}}},
+
+		"tls": {
+			"certificates": {"automate": [
+				"*.pimous.dev"
+			]},
+
+			"automation": {
+				"policies": [{
+					"issuers": [{
+						"module": "acme",
+						"email": "pro@pimous.dev"
+					}]
+				}]
+			}
+		}
+	}
+}
