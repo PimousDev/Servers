@@ -17,15 +17,10 @@
 
 SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
+#shellcheck source=../../bin/dockerUtils.sh
+source "bin/dockerUtils.sh"
+
 source "$SCRIPT_DIR"/config.sh
 
 # ---
-echo "# STOPPING CONTAINER ($DOCKER_CONTAINER_NAME) ..."
-if docker container inspect $DOCKER_CONTAINER_NAME &>/dev/null; then
-	docker container stop $DOCKER_CONTAINER_NAME
-else
-	echo "$DOCKER_CONTAINER_NAME wasn't started."
-fi
-
-echo "# DELETING CONTAINER VOLUMES ($DOCKER_CONTAINER_NAME) ..."
-docker volume rm -f $DOCKER_DATA_VOLUME_NAME $DOCKER_LOG_VOLUME_NAME
+clean $DOCKER_CONTAINER_NAME $DOCKER_DATA_VOLUME_NAME

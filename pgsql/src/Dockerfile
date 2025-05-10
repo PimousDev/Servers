@@ -20,10 +20,8 @@ ENV PGUSER=postgres
 ENV PGHOME=/var/lib/postgresql
 ENV PGCONFIG=/etc/postgresql
 ENV ENTRYPOINT_DIR=/docker-entrypoint-initdb.d
-ENV PGLOG=/var/log/postgresql
 
-RUN mkdir -p $PGCONFIG $PGLOG
-RUN chown -R $PGUSER:$PGUSER $PGLOG
+RUN mkdir -p $PGCONFIG
 
 COPY --chown=$PGUSER:$PGUSER --chmod=0600 *.crt *.key $PGHOME
 
