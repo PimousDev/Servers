@@ -1,0 +1,121 @@
+{
+	"admin": {
+		"disabled": true
+	},
+
+	"logging": {
+		"sink": {
+			"writer": {"output": "stdout"}
+		},
+		"logs": {"default": {
+			"writer": {"output": "stdout"},
+			"encoder": {"format": "console"},
+			"level": "INFO"
+		}}
+	},
+
+	"apps": {
+		"http": {"servers": {"Fallback": {
+			"listen": [":80", ":443"],
+
+			"routes": [
+				{ // Definitions and mapping.
+					"handle": [
+						{
+							"handler": "vars",
+							"serverName": "Pimous Dev. Fallback",
+							"root": "{env.CYROOT}",
+							"relPublicDir": "resource/public"
+						},
+
+						{ // Mapping domain to their folder and handler.
+							"handler": "map",
+							"source": "{http.request.host}",
+							"destinations": ["{folder}", "{handler}"],
+							"mappings": [
+								{
+									"input": "pimous.dev",
+									"outputs": ["master", "file_server"]
+								},
+								{
+									"input_regexp": "(?<sdn>.+)\\.pimous.dev",
+									"outputs": ["$sdn", "file_server"]
+								},
+								{
+									"input_regexp": "localhost|127\\.0\\.0\\.1",
+									"outputs": ["local", "file_server"]
+								}
+							],
+							"defaults": ["whereami", "file_server"]
+						},
+
+						{ // New definitions upon mapping.
+							"handler": "vars",
+							"publicDir": "{http.vars.root}/{folder}/{http.vars.relPublicDir}"
+						},
+
+						{ // Our own Server header value.
+							"handler": "headers",
+							"response": {
+								"set": {
+									"Server": [
+										"{http.vars.serverName} - {folder}"
+									]
+								}
+							}
+						}
+					]
+				},
+
+				{ // When the fallback's document root exists.
+					"match": [{
+						"not": [
+							{"vars": {"{folder}": ["whoami"]}}
+						],
+						"file": {"try_files": ["{folder}/"]}
+					}],
+					"handle": [{
+						"handler": "subroute",
+						"routes": [
+							{ // File server
+								"match": [{
+									"vars": {"{handler}": ["file_server"]}
+								}],
+								"handle": [{
+									"handler": "file_server",
+									"root": "{http.vars.publicDir}"
+								}]
+							}
+						]
+					}]
+				},
+
+				{ // Matched to "whoami" or document root.
+					"handle": [{
+						"handler": "file_server",
+						"root": "{http.vars.publicDir}",
+						"status_code": 503
+					}]
+				}
+			],
+
+			"logs": {
+				"default_logger_name": "default"
+			}
+		}}},
+
+		"tls": {
+			"certificates": {},
+
+			"automation": {
+				"policies": [{
+					"subjects": ["pimous.dev"],
+					"issuers": [{
+						"module": "acme",
+						"email": "pro@pimous.dev"
+					}]
+				}]
+			}
+		}
+	}
+}
