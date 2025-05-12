@@ -1,5 +1,5 @@
 # Pimous Servers [![License: LGPL v3](https://img.shields.io/badge/License-LGPL_v3-orange.svg)](COPYING.LESSER)
-Pimous Servers is git repository containing all scripts, program configurations
+Pimous Servers is a repository containing all scripts, program configurations
 and docker files used by Pimous Dev.'s server administrators.
 
 Currently, our servers are hosted at [Infomaniak](https://www.infomaniak.com)
