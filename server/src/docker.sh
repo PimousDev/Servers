@@ -28,7 +28,7 @@ FSTAB_LINE_FORMAT="PARTUUID=%s %s %s noatime,nodiratime 0 2"
 DOCKER_SOURCE_FORMAT="deb [arch=%s signed-by=%s] https://download.docker.com/linux/debian %s stable"
 
 PARTITION_FORMAT=ext4
-FINAL_MOUNT_POINT=/docker
+FINAL_MOUNT_POINT=/var/lib/docker
 FSTAB_FILE_PATH=/etc/fstab
 DOCKER_APT_SOURCE_FILE=/etc/apt/sources.list.d/docker.list
 DOCKER_KEYRING_FILE=/etc/apt/keyrings/docker.asc
