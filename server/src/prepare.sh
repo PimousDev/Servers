@@ -22,18 +22,12 @@
 # @throw 3 Choosen disk not found.
 #-------------------------------------------------------------------------------
 
-read -r -d '' SFDISK_SCRIPT <<-EOF 
-	label: gpt
-	unit: sectors
-	sector-size: 512
-	first-lba: 2048
-	last-lba: 524287966
+SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
-	start=2048, size=524285919, type=933AC7E1-2EB4-4F13-B844-0E14E2AEF915
-EOF
-read -r -d '' FSTAB_LINE <<-EOF 
-	PARTUUID=%s %s %s noatime,nodiratime 0 2\n
-EOF
+FSTAB_LINE="PARTUUID=%s %s %s noatime,nodiratime 0 2"
+
+SFDISK_SCRIPT_FILE=data.sfdisk
+HOME_PARTITION_LABEL=Home
 
 PARTITION_FORMAT=ext4
 TEMPORARY_MOUNTS_DIR=/mnt
@@ -41,6 +35,9 @@ FINAL_MOUNT_POINT=/home
 TEMPORARY_MOUNT_DIR=$TEMPORARY_MOUNTS_DIR/$FINAL_MOUNT_POINT
 FSTAB_FILE_PATH=/etc/fstab
 AUTH_KEYS_FILE_PATH=/home/%s/.ssh/authorized_keys
+
+# ---
+resourceDir=${2-"$SCRIPT_DIR/../resource"}
 
 # ---
 echo "## INSTALLING NEEDED PACKAGES"
@@ -67,37 +64,42 @@ lsblk
 echo -n "Which disk is the data disk? "
 read -r disk
 disk=/dev/$disk
-part="$disk"1
 
 if [[ ! -e $disk ]]; then
-	echo "Disk doesn't exist"
+	echo "Disk doesn't exist ($disk)."
 	exit 3
 fi
 
 echo "## CREATING GPT PARTITION TABLE WITH ONE FULL PARTITION"
-echo -n "$SFDISK_SCRIPT" | sudo sfdisk "$disk" --wipe always || exit 2
+sfdisk "$disk" --wipe always < "$resourceDir/$SFDISK_SCRIPT_FILE" || exit 1
+part=$(blkid -t LABEL="$HOME_PARTITION_LABEL" -o device)
 
-echo "## FORMATTING TO $PARTITION_FORMAT NEW PARTITIONS"
-yes | sudo mkfs -t $PARTITION_FORMAT "$part" || exit 2
+if [[ ! -e $part ]]; then
+	echo "Newly created partition doesn't exist... ($part)."
+	exit 1
+fi
 
-echo "## COPYING OLD /home"
-sudo mkdir $TEMPORARY_MOUNT_DIR
-sudo mount "$part" $TEMPORARY_MOUNT_DIR
+echo "## FORMATTING TO $PARTITION_FORMAT NEW PARTITION"
+yes | mkfs -t $PARTITION_FORMAT "$part" || exit 1
 
-sudo cp -fr $FINAL_MOUNT_POINT/. $TEMPORARY_MOUNT_DIR --preserve=all
+echo "## COPYING OLD $FINAL_MOUNT_POINT"
+mkdir $TEMPORARY_MOUNT_DIR
+mount "$part" $TEMPORARY_MOUNT_DIR
 
-sudo umount $TEMPORARY_MOUNT_DIR
-sudo rmdir $TEMPORARY_MOUNT_DIR
+cp -fr $FINAL_MOUNT_POINT/. $TEMPORARY_MOUNT_DIR --preserve=all
+
+umount $TEMPORARY_MOUNT_DIR
+rmdir $TEMPORARY_MOUNT_DIR
 
 echo "## MOUNTING ON $FINAL_MOUNT_POINT AND UPDATING $FSTAB_FILE_PATH"
-sudo mount "$part" $FINAL_MOUNT_POINT
+mount "$part" $FINAL_MOUNT_POINT
 
 # shellcheck disable=SC2059
 printf "$FSTAB_LINE" \
-		"$(sudo blkid -s PARTUUID -o value "$part")" \
+		"$(blkid -t LABEL="Xibitol"  -s PARTUUID -o value "$part")" \
 		$FINAL_MOUNT_POINT \
 		$PARTITION_FORMAT \
-	| sudo tee -a $FSTAB_FILE_PATH > /dev/null
+	> $FSTAB_FILE_PATH
 
 # ---
 echo "## CREATING ADMIN USER"
@@ -105,12 +107,12 @@ echo -n "What is the new admin user? "
 read -r user
 
 echo "## CREATING THE USER $user FOR ADMINISTRATION"
-sudo adduser "$user" --disabled-password 
-sudo usermod xibitol --groups users,staff,docker
+adduser "$user" --disabled-password 
+usermod xibitol --groups users,staff,docker
 
 echo "## COPYING authorized_keys FILE FROM $USER"
 # shellcheck disable=SC2059
-sudo cp -fr "$(printf "$AUTH_KEYS_FILE_PATH" "$USER")" \
+cp -fr "$(printf "$AUTH_KEYS_FILE_PATH" "$USER")" \
 	"$(dirname "$(printf "$AUTH_KEYS_FILE_PATH" "$user")")"
 # shellcheck disable=SC2059
-sudo chown "$user:$user" "$(printf "$AUTH_KEYS_FILE_PATH" "$user")"
+chown "$user:$user" "$(printf "$AUTH_KEYS_FILE_PATH" "$user")"
