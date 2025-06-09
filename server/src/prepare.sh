@@ -40,22 +40,16 @@ AUTH_KEYS_FILE_PATH=/home/%s/.ssh/authorized_keys
 resourceDir=${2-"$SCRIPT_DIR/../resource"}
 
 # ---
+echo "## INSTALLING KEYRINGS FOLDER"
+install -m 0755 -d /etc/apt/keyrings
+
 echo "## INSTALLING NEEDED PACKAGES"
-sudo apt update
-sudo apt install -y ca-certificates curl  \
+apt update
+apt install -y ca-certificates curl xfsprogs \
 	--no-install-recommends --no-install-suggests
 
 echo "## INSTALLING SPECIAL PACKAGES"
-
-sudo install -m 0755 -d /etc/apt/keyrings
-sudo curl -fsSL https://download.docker.com/linux/debian/gpg \
-	-o /etc/apt/keyrings/docker.asc
-sudo chmod a+r /etc/apt/keyrings/docker.asc
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" \
-	| sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-sudo apt update
-sudo apt install -y xfsprogs git docker-ce docker-buildx-plugin \
+apt install -y git \
 	--no-install-recommends --no-install-suggests
 
 # ---
