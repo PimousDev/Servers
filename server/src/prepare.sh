@@ -24,7 +24,7 @@
 
 SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
-FSTAB_LINE="PARTUUID=%s %s %s noatime,nodiratime 0 2"
+FSTAB_LINE_FORMAT="PARTUUID=%s %s %s noatime,nodiratime 0 2"
 
 SFDISK_SCRIPT_FILE=data.sfdisk
 HOME_PARTITION_LABEL=Home
@@ -89,8 +89,8 @@ echo "## MOUNTING ON $FINAL_MOUNT_POINT AND UPDATING $FSTAB_FILE_PATH"
 mount "$part" $FINAL_MOUNT_POINT
 
 # shellcheck disable=SC2059
-printf "$FSTAB_LINE" \
-		"$(blkid -t LABEL="Xibitol"  -s PARTUUID -o value "$part")" \
+printf "$FSTAB_LINE_FORMAT" \
+		"$(blkid -t LABEL="$HOME_PARTITION_LABEL" -s PARTUUID -o value "$part")" \
 		$FINAL_MOUNT_POINT \
 		$PARTITION_FORMAT \
 	> $FSTAB_FILE_PATH
