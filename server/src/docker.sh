@@ -34,9 +34,6 @@ DOCKER_APT_SOURCE_FILE=/etc/apt/sources.list.d/docker.list
 DOCKER_KEYRING_FILE=/etc/apt/keyrings/docker.asc
 
 # ---
-echo "{\"data-root\":\"$FINAL_MOUNT_POINT\"}"
-
-# ---
 echo "## FORMATTING TO $PARTITION_FORMAT DOCKER PARTITION"
 part=$(blkid -t LABEL="$DOCKER_PARTITION_LABEL" -o device)
 
@@ -75,3 +72,10 @@ sudo apt update
 echo "## INSTALLING DOCKER"
 sudo apt install -y xfsprogs git docker-ce docker-buildx-plugin \
 	--no-install-recommends --no-install-suggests
+
+# ---
+echo "## ADDING ADMIN USER TO DOCKER GROUP"
+echo -n "What is the admin user? "
+read -r user
+
+usermod "$user" --append --groups docker
