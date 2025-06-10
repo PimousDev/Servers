@@ -28,16 +28,17 @@ SCRIPT_DESTINATION_DIR=/tmp
 args=("$@")
 
 if [[ $# -lt 3 ]]; then
-	echo "Usage: remoteExec.sh <ip> <user> <command> [args...]" 1>&2
+	echo "Usage: remoteExec.sh <ip> <user> <sudo=0|1> <command> [args...]" 1>&2
 	exit 2
 fi
 
 ip=$1
 user=$2
-command=$3
+sudoMode=$([[ $3 == 1 ]] && echo "sudo" || echo "")
+command=$4
 cmdArgs=()
 
-for i in $(seq 3 "$(($# - 1))"); do
+for i in $(seq 4 "$(($# - 1))"); do
 	cmdArgs+=("${args[$i]}")
 done
 
@@ -61,4 +62,4 @@ else
 	echo "# Executing sent $command..."
 fi
 # shellcheck disable=SC2029
-ssh "$remoteAuthority" "exec $destFile ${cmdArgs[*]}"
+ssh "$remoteAuthority" "exec $sudoMode $destFile ${cmdArgs[*]}"
