@@ -35,7 +35,7 @@ DOCKER_KEYRING_FILE=/etc/apt/keyrings/docker.asc
 
 # ---
 echo "## FORMATTING TO $PARTITION_FORMAT DOCKER PARTITION"
-part=$(blkid -t LABEL="$DOCKER_PARTITION_LABEL" -o device)
+part=$(blkid -t PARTLABEL="$DOCKER_PARTITION_LABEL" -o device)
 
 if [[ ! -e $part ]]; then
 	echo "Partition doesn't exist... ($part)."
