@@ -20,13 +20,23 @@
 # @throw 1 Unkown error.
 # @throw 2 Bad usage.
 # @throw 3 Choosen disk not found.
+# @thorw 4 No such old user.
 #-------------------------------------------------------------------------------
-
-SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
 FSTAB_LINE_FORMAT="PARTUUID=%s %s %s noatime,nodiratime 0 2"
 
-SFDISK_SCRIPT_FILE=data.sfdisk
+SFDISK_SCRIPT=$(cat << EOF
+label: gpt
+unit: sectors
+sector-size: 512
+first-lba: 2048
+last-lba: 524287966
+
+start=2048, size=20971520, type=933AC7E1-2EB4-4F13-B844-0E14E2AEF915, name="Home"
+start=20973568, size=503314398, type=933AC7E1-2EB4-4F13-B844-0E14E2AEF915, name="Docker"
+EOF
+)
+
 HOME_PARTITION_LABEL=Home
 
 PARTITION_FORMAT=ext4
@@ -37,7 +47,12 @@ FSTAB_FILE_PATH=/etc/fstab
 AUTH_KEYS_FILE_PATH=/home/%s/.ssh/authorized_keys
 
 # ---
-resourceDir=${2-"$SCRIPT_DIR/../resource"}
+oldUser=$1
+
+if ! id -u "$oldUser" &>/dev/null; then
+	echo "No such $oldUser old user."
+	exit 4
+fi
 
 # ---
 echo "## INSTALLING KEYRINGS FOLDER"
@@ -45,6 +60,7 @@ install -m 0755 -d /etc/apt/keyrings
 
 echo "## INSTALLING NEEDED PACKAGES"
 apt update
+apt upgrade -y
 apt install -y ca-certificates curl xfsprogs \
 	--no-install-recommends --no-install-suggests
 
@@ -65,8 +81,8 @@ if [[ ! -e $disk ]]; then
 fi
 
 echo "## CREATING GPT PARTITION TABLE WITH ONE FULL PARTITION"
-sfdisk "$disk" --wipe always < "$resourceDir/$SFDISK_SCRIPT_FILE" || exit 1
-part=$(blkid -t LABEL="$HOME_PARTITION_LABEL" -o device)
+sfdisk "$disk" --wipe always <<< "$SFDISK_SCRIPT" || exit 1
+part=$(blkid -t PARTLABEL="$HOME_PARTITION_LABEL" -o device)
 
 if [[ ! -e $part ]]; then
 	echo "Newly created partition doesn't exist... ($part)."
@@ -90,7 +106,7 @@ mount "$part" $FINAL_MOUNT_POINT
 
 # shellcheck disable=SC2059
 printf "$FSTAB_LINE_FORMAT" \
-		"$(blkid -t LABEL="$HOME_PARTITION_LABEL" -s PARTUUID -o value "$part")" \
+		"$(blkid -s PARTUUID -o value "$part")" \
 		$FINAL_MOUNT_POINT \
 		$PARTITION_FORMAT \
 	> $FSTAB_FILE_PATH
@@ -102,11 +118,13 @@ read -r user
 
 echo "## CREATING THE USER $user FOR ADMINISTRATION"
 adduser "$user" --disabled-password 
-usermod xibitol --groups users,staff,docker
+usermod "$user" --groups users,staff
 
-echo "## COPYING authorized_keys FILE FROM $USER"
+echo "## COPYING authorized_keys FILE FROM $oldUser"
 # shellcheck disable=SC2059
-cp -fr "$(printf "$AUTH_KEYS_FILE_PATH" "$USER")" \
-	"$(dirname "$(printf "$AUTH_KEYS_FILE_PATH" "$user")")"
+sshFolder="$(dirname "$(printf "$AUTH_KEYS_FILE_PATH" "$user")")/"
+
+mkdir -p "$sshFolder"
 # shellcheck disable=SC2059
-chown "$user:$user" "$(printf "$AUTH_KEYS_FILE_PATH" "$user")"
+cp -fr "$(printf "$AUTH_KEYS_FILE_PATH" "$oldUser")" "$sshFolder"
+chown -R "$user:$user" "$sshFolder"
