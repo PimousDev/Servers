@@ -62,7 +62,7 @@
 						"transport": {
 							"protocol": "http"
 						},
-						"upstreams": [{"dial": "172.17.0.1:31001"}],
+						//"upstreams": [{"dial": "172.17.0.1:31001"}],
 						"dynamic_upstreams": {
 							"source": "srv",
 							"name": "pimous.dev",
