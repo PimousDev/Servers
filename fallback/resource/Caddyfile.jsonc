@@ -91,11 +91,11 @@
 					}]
 				},
 
-				{ // Matched to "whoami" or document root.
+				{ // Matched to "whoami".
 					"group": "exit",
 					"handle": [{
 						"handler": "file_server",
-						"root": "{http.vars.publicDir}",
+						"root": "{http.vars.root}/whereami/{http.vars.publicDir}",
 						"status_code": 503
 					}]
 				}
