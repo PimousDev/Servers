@@ -71,7 +71,7 @@
 					"group": "exit",
 					"match": [{
 						"not": [
-							{"vars": {"{folder}": ["whoami"]}}
+							{"vars": {"{folder}": ["whereami"]}}
 						],
 						"file": {"try_files": ["{folder}/"]}
 					}],
@@ -91,11 +91,11 @@
 					}]
 				},
 
-				{ // Matched to "whoami".
+				{ // Matched to "whereami".
 					"group": "exit",
 					"handle": [{
 						"handler": "file_server",
-						"root": "{http.vars.root}/whereami/{http.vars.publicDir}",
+						"root": "{http.vars.root}/whereami/{http.vars.relPublicDir}",
 						"status_code": 503
 					}]
 				}
