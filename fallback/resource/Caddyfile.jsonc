@@ -25,7 +25,7 @@
 							"handler": "vars",
 							"serverName": "Pimous Dev. Fallback",
 							"root": "{env.CYROOT}",
-							"relPublicDir": "resource/public"
+							"relPublicDir": "public"
 						},
 
 						{ // Mapping domain to their folder and handler.
