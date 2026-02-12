@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Assignations - Pimous Dev. Servers</title>
+
+	<style>
+		table{
+			border-collapse: collapse;
+		}
+		th, td{
+			padding: 4px;
+
+			border: 1px solid black;
+		}
+		td.center{
+			text-align: center;
+		}
+
+		thead th{
+			background-color: slategray;
+		}
+		thead tr.sub th{
+			background-color: lightslategray;
+		}
+		tbody tr.cat th{
+			background-color: darkgray;
+		}
+		tbody th{
+			background-color: lightgray;
+		}
+
+		.used, .assigned, .reserved, .unused{
+			text-align: center;
+		}
+		.used{ background-color: palegreen; }
+		.assigned{ background-color: palegoldenrod; }
+		.used::after, .assigned::after{
+			content: "✓";
+		}
+		.reserved, .reserved{ background-color: palevioletred; }
+		.reserved::after{
+			content: "𐄂";
+		}
+	</style>
+</head>
+<body>
+	<h1>Assignations - Pimous Dev. Servers</h1>
+
+	<!-- =================================================================== -->
+	<h2>Servers (<code>net.pimous.dev.</code>)</h2>
+	<ol>
+		<li><code>s0.net.pimous.dev</code> (Main Server)</li>
+		<li><code>s1.net.pimous.dev</code> (Log Server)</li>
+	</ol>
+
+	<!-- =================================================================== -->
+	<h2>Networks (<code>172.31.0.0/20</code>)</h2>
+	<ul>
+		<li>Main: <code>172.31.0.0/24</code><ul>
+			<li>Common: <code>172.31.0.0/26</code></li>
+			<li>Database: <code>172.31.0.64/26</code><ul>
+				<li><i>ps-dbs-pgsql</i>: <code>172.31.0.65</code></li>
+			</ul></li>
+			<li>Reproxy: <code>172.31.0.128/25</code><ul>
+				<li><i>ps-www-reproxy</i>: <code>172.31.0.129</code></li>
+				<li><i>ps-www-fallback</i>: <code>172.31.0.130</code></li>
+				<li><i>ps-www-wordsrain</i>: <code>172.31.0.131</code></li>
+			</ul></li>
+		</ul></li>
+		<li>Gaming: <code>172.31.1.0/24</code><ul>
+			<li><i>ps-gam-statis</i>: <code>172.31.1.1/30</code></li>
+			<li><i>ps-gam-pzds</i>: <code>172.31.1.5/30</code></li>
+		</ul></li>
+		<li>Development: <code>172.31.255.0/24</code></li>
+	</ul>
+
+	<!-- =================================================================== -->
+	<h2>Ports (<code>31000</code>-<code>31999</code>)</h2>
+	<p><code>31XYZ</code> where X is the category, Y the group/project and Z the service.</p>
+	<table>
+		<thead>
+			<tr>
+				<th>Range</th>
+				<th colspan="5">Category</th>
+			</tr>
+			<tr class="sub">
+				<th>Range</th>
+				<th colspan="2">Assigned</th>
+				<th colspan="3">Group</th>
+			</tr>
+			<tr class="sub">
+				<th rowspan="2">Port</th>
+				<th colspan="2">Protocols</th>
+				<th rowspan="2">Service</th>
+				<th colspan="2">Optional ports</th>
+			</tr>
+			<tr class="sub">
+				<th>TCP</th>
+				<th>UDP</th>
+				<th>TCP</th>
+				<th>UDP</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td>Web Reverse proxy</td>
+				<td>80, 443</td>
+				<td>80, 443</td>
+			</tr>
+
+			<!-- ----------------------------------------------------------- -->
+			<tr class="cat">
+				<th>0</th>
+				<th colspan="5">General</th>
+			</tr>
+
+			<tr>
+				<th>00</th>
+				<th class="used" colspan="2"></th>
+				<th colspan="3">Server</th>
+			</tr>
+			<tr>
+				<td>3100<b>0</b></td>
+				<td class="used"></td>
+				<td></td>
+				<td>SSH</td>
+				<td>22</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>3100<b>1</b></td>
+				<td class="used"></td>
+				<td class="used"></td>
+				<td>Web Fallback</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>3100<b>2</b></td>
+				<td class="used"></td>
+				<td class="used"></td>
+				<td>HTTP Administration panel</td>
+				<td>33002</td>
+				<td>33002</td>
+			</tr>
+			<tr>
+				<td>3100<b>3</b></td>
+				<td class="used"></td>
+				<td class="used"></td>
+				<td>HTTPS Administration panel</td>
+				<td>33003</td>
+				<td>33003</td>
+			</tr>
+
+			<tr>
+				<th>01</th>
+				<th class="used" colspan="2"></th>
+				<th colspan="3">Databases</th>
+			</tr>
+			<tr>
+				<td>3101<b>0</b></td>
+				<td class="used"></td>
+				<td></td>
+				<td>PostgreSQL (pgsql)</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>3101<b>1</b></td>
+				<td class="assigned"></td>
+				<td></td>
+				<td>MariaDB (mysql)</td>
+				<td></td>
+				<td></td>
+			</tr>
+
+			<tr>
+				<th>02</th>
+				<th class="used" colspan="2"></th>
+				<th colspan="3">ImageDispatcher</th>
+			</tr>
+			<tr>
+				<td>3102<b>0</b></td>
+				<td class="used"></td>
+				<td></td>
+				<td>Server</td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>3102<b>2</b></td>
+				<td class="used"></td>
+				<td></td>
+				<td>Client</td>
+				<td></td>
+				<td></td>
+			</tr>
+
+			<tr>
+				<th>03</th>
+				<th class="reserved" colspan="2"></th>
+				<th colspan="3"><i>Reserved for future uses</i></th>
+			</tr>
+
+			<tr>
+				<th>07</th>
+				<th class="assigned" colspan="2"></th>
+				<th colspan="3">SBP Games</th>
+			</tr>
+			<tr>
+				<td>3107<b>0</b></td>
+				<td class="assigned"></td>
+				<td class="assigned"></td>
+				<td>SBPGWS</td>
+				<td></td>
+				<td></td>
+			</tr>
+
+			<tr>
+				<th>09</th>
+				<th class="used" colspan="2"></th>
+				<th colspan="3">Hosting for others</th>
+			</tr>
+			<tr>
+				<td>3109<b>0</b></td>
+				<td class="reserved"></td>
+				<td class="reserved"></td>
+				<td><i>Reserved for future uses</i></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>3109<b>1</b></td>
+				<td class="used"></td>
+				<td class="used"></td>
+				<td>wordsrain (ENSEIRB-MATEMECA; BPW; Loris & Thibault)</td>
+				<td></td>
+				<td></td>
+			</tr>
+
+			<!-- ----------------------------------------------------------- -->
+			<tr class="cat">
+				<th>1</th>
+				<th colspan="5">Gaming</th>
+			</tr>
+
+			<tr>
+				<th>10</th>
+				<th class="reserved" colspan="2"></th>
+				<th colspan="3"><i>Reserved for future uses</i></th>
+			</tr>
+
+			<tr>
+				<th>11</th>
+				<th class="used" colspan="2"></th>
+				<th colspan="3">Project Zomboid</th>
+			</tr>
+			<tr>
+				<td>3111<b>0</b></td>
+				<td></td>
+				<td class="used"></td>
+				<td>Server</td>
+				<td></td>
+				<td>16262</td>
+			</tr>
+
+			<!-- ----------------------------------------------------------- -->
+			<tr class="cat">
+				<th>2</th>
+				<th colspan="5"><i>Unnamed</i></th>
+			</tr>
+
+			<tr>
+				<th>20</th>
+				<th class="reserved" colspan="2"></th>
+				<th colspan="3"><i>Reserved for future uses</i></th>
+			</tr>
+
+			<tr>
+				<th>24</th>
+				<th class="reserved" colspan="2"></th>
+				<th colspan="3"><i>Reserved for future uses</i></th>
+			</tr>
+
+			<!-- ----------------------------------------------------------- -->
+			<tr class="cat">
+				<th>3</th>
+				<th colspan="5"><i>Unnamed</i></th>
+			</tr>
+
+			<tr>
+				<th>31</th>
+				<th class="reserved" colspan="2"></th>
+				<th colspan="3"><i>Reserved for future uses</i></th>
+			</tr>
+
+			<tr>
+				<th>32</th>
+				<th class="assigned" colspan="2"></th>
+				<th colspan="3"></th>
+			</tr>
+			<tr>
+				<td>3132<b>3</b></td>
+				<td class="assigned"></td>
+				<td class="assigned"></td>
+				<td>Pierre</td>
+				<td></td>
+				<td></td>
+			</tr>
+
+			<!-- ----------------------------------------------------------- -->
+			<tr class="cat">
+				<th>9</th>
+				<th colspan="5"><i>Unamed</i></th>
+			</tr>
+
+			<tr>
+				<th>99</th>
+				<th class="used" colspan="2"></th>
+				<th colspan="3">Development</th>
+			</tr>
+			<tr>
+				<td>3199<b>8</b></td>
+				<td class="assigned"></td>
+				<td class="assigned"></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>3199<b>9</b></td>
+				<td class="used"></td>
+				<td class="used"></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>
