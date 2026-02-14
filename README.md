@@ -9,7 +9,7 @@ because of their environmental concerns.
 > Version: **-**
 
 ## Documentation
-See [Assignations](assignations.html).
+See [admin.pimous.dev](https://admin.pimous.dev/).
 
 ### Technician installation guide
 _Soon..._
