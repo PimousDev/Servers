@@ -6,6 +6,11 @@
 	<title>Assignations - Pimous Dev. Servers</title>
 
 	<style>
+		:root{
+			--color-used: palegreen;
+			--color-assigned: palegoldenrod;
+			--color-reserved: palevioletred;
+		}
 		table{
 			border-collapse: collapse;
 		}
@@ -31,16 +36,19 @@
 			background-color: lightgray;
 		}
 
-		.used, .assigned, .reserved, .unused{
+		.used, .assigned, .reserved{
 			text-align: center;
 		}
-		.used{ background-color: palegreen; }
-		.assigned{ background-color: palegoldenrod; }
-		.used::after, .assigned::after{
+		td.used{ background-color: var(--color-used); }
+		span.used{ color: var(--color-used); }
+		td.assigned{ background-color: palegoldenrod; }
+		span.assigned{ color: var(--color-assigned); }
+		td.used::after, td.assigned::after{
 			content: "✓";
 		}
-		.reserved, .reserved{ background-color: palevioletred; }
-		.reserved::after{
+		td.reserved{ background-color: palevioletred; }
+		span.reserved{ color: var(--color-reserved); }
+		td.reserved::after{
 			content: "𐄂";
 		}
 
@@ -66,26 +74,27 @@
 	<h2>Networks (<code>172.31.0.0/20</code>)</h2>
 	<ul>
 		<li>Main: <code>172.31.0.0/24</code><ul>
-			<li>Common: <code>172.31.0.0/26</code></li>
-			<li>Database: <code>172.31.0.64/26</code><ul>
-				<li><i>ps-dbs-pgsql</i>: <code>172.31.0.65</code></li>
+			<li>Common: <i>ps_net_com</i>: <code>172.31.0.0/26</code></li>
+			<li>Database: <i>ps_net_dbs</i>: <code>172.31.0.64/26</code><ul>
+				<li><i>ps_con_dbs-pgsql</i>: <code>172.31.0.66</code></li>
 			</ul></li>
-			<li>Reproxy: <code>172.31.0.128/25</code><ul>
-				<li><i>ps-www-reproxy</i>: <code>172.31.0.129</code></li>
-				<li><i>ps-www-fallback</i>: <code>172.31.0.130</code></li>
-				<li><i>ps-www-wordsrain</i>: <code>172.31.0.131</code></li>
+			<li>Reproxy: <i>ps_net_www</i>: <code>172.31.0.128/25</code><ul>
+				<li><i>ps_con_www-reproxy</i>: <code>172.31.0.130</code></li>
+				<li><i>ps_con_www-fallback</i>: <code>172.31.0.131</code></li>
+				<li><i>ps_con_www-wordsrain</i>: <code>172.31.0.132</code></li>
 			</ul></li>
 		</ul></li>
 		<li>Gaming: <code>172.31.1.0/24</code><ul>
-			<li><i>ps-gam-statis</i>: <code>172.31.1.1/30</code></li>
-			<li><i>ps-gam-pzds</i>: <code>172.31.1.5/30</code></li>
+			<li><i>ps_net_gam-statis</i>: <code>172.31.1.0/29</code></li>
+			<li><i>ps_net_gam-pzds</i>: <code>172.31.1.8/29</code></li>
 		</ul></li>
-		<li>Development: <code>172.31.255.0/24</code></li>
+		<li>Development: <i>ps_net_dev</i>: <code>172.31.255.0/24</code></li>
 	</ul>
 
 	<!-- =================================================================== -->
 	<h2>Ports (<code>31000</code>-<code>31999</code>)</h2>
 	<p><code>31XYZ</code> where X is the category, Y the group/project and Z the service.</p>
+	<p>Colors: <span class="used">used</span>, <span class="assigned">assigned</span>, <span class="reserved">reserved</span>, unused.</p>
 	<table>
 		<thead>
 			<tr>
