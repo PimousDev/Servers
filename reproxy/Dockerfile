@@ -14,21 +14,19 @@
 # No copy of the license is bundled with the script (As it is posted in a GitHub
 # gist). Please see https://www.gnu.org/licenses/.
 
-FROM caddy:2.10.0-builder-alpine AS builder
+FROM caddy:2.11.2-builder-alpine AS builder
 
 RUN xcaddy build \
 	--with github.com/caddyserver/jsonc-adapter \
 	--with github.com/caddy-dns/infomaniak
 
-FROM caddy:2.10.0-alpine
+FROM caddy:2.11.2-alpine
 
 ENV CYUSER=caddy
 ENV CYCONFIG=/etc/caddy
 ENV CYROOT=/usr/share/caddy
 
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
-
-COPY Caddyfile.jsonc infomaniak_api-token $CYCONFIG
 
 # Unprivileged user
 RUN	addgroup -S $CYUSER
@@ -39,5 +37,5 @@ RUN chown -R $CYUSER:$CYUSER $XDG_CONFIG_HOME $XDG_DATA_HOME $CYROOT
 USER $CYUSER
 
 CMD ["sh", "-c", \
-	"caddy run --config $CYCONFIG/Caddyfile.jsonc --adapter jsonc" \
+	"caddy run --config /caddyFile --adapter jsonc" \
 ]

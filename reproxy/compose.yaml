@@ -1,0 +1,48 @@
+name: ps_con_www-reproxy
+
+services:
+  reproxy:
+    container_name: ps_con_www-reproxy_main
+
+    image: pimousservers/reproxy:2.11.2-alpine
+    build:
+      context: resource
+      dockerfile: ../Dockerfile
+      network: host
+
+    volumes:
+      - vol-config:/config
+      - vol-data:/data
+    secrets:
+      - dnsApiToken
+    configs:
+      - caddyFile
+
+    networks:
+      net-www:
+        ipv4_address: 172.31.0.130
+    ports:
+      - "80:80"
+      - "443:443"
+
+volumes:
+  vol-config:
+    name: ps_vol_www-reproxy_config
+  vol-data:
+    name: ps_vol_www-reproxy_data
+secrets:
+  dnsApiToken:
+    name: ps_sec_www-reproxy_dns-api-token
+    file: resource/infomaniak_api-token
+configs:
+  caddyFile:
+    name: ps_cnf_www-reproxy_config
+    file: resource/Caddyfile.jsonc
+
+networks:
+  net-www:
+    name: ps_net_www
+    ipam:
+      config:
+        - subnet: 172.31.0.128/25
+    enable_ipv6: false

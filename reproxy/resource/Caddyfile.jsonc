@@ -15,7 +15,7 @@
 	},
 
 	"apps": {
-		"http": {"servers": {"Reproxy": {
+		"http": {"servers": {"ReProxy": {
 			"listen": [":80", ":443"],
 			"listener_wrappers": [
 				{"wrapper": "http_redirect"},
@@ -104,7 +104,7 @@
 							"dns": {
 								"provider":  {
 									"name": "infomaniak",
-									"api_token": "{file./etc/caddy/infomaniak_api-token}"
+									"api_token": "{file./run/secrets/dnsApiToken}"
 								},
 								"ttl": "1h"
 							}

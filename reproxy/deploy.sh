@@ -17,12 +17,16 @@
 
 SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
-#shellcheck source=../../bin/dockerUtils.sh
-source "bin/dockerUtils.sh"
-
-source "$SCRIPT_DIR"/config.sh
+# ---
+mode=${1-"prod"}
 
 # ---
-clean $DOCKER_CONTAINER_NAME \
-	$DOCKER_CONFIG_VOLUME_NAME \
-	$DOCKER_DATA_VOLUME_NAME
+cd "$SCRIPT_DIR" || exit
+
+if [[ $mode = "prod" ]]; then
+	docker compose up --build -d
+else
+	docker compose up --build
+fi
+
+cd - >/dev/null || exit
