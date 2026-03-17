@@ -25,23 +25,23 @@ cd "$SCRIPT_DIR" || exit
 
 # admin
 localPublicFolder=resource/sites/admin/public
-if [[ ! -d localPublicFolder ]]; then
-	mkdir -p localPublicFolder
-elif [[ "$(ls -A localPublicFolder || wc -l)" -gt 0 ]]; then
+if [[ ! -d $localPublicFolder ]]; then
+	mkdir -p $localPublicFolder
+elif [[ "$(find $localPublicFolder | wc -l)" -gt 0 ]]; then
 	rm -r ${localPublicFolder:?}/*
 fi
-cp -r ../admin/src/* localPublicFolder
+cp -r ../admin/src/* $localPublicFolder
 # admin
 
 # TEMP - wordsrain
 publicFolder=/home/wordsrain/www/public
 localPublicFolder=resource/sites/wordsrain/public
-if [[ ! -d localPublicFolder ]]; then
-	mkdir -p localPublicFolder
-elif [[ "$(ls -A localPublicFolder || wc -l)" -gt 0 ]]; then
+if [[ ! -d $localPublicFolder ]]; then
+	mkdir -p $localPublicFolder
+elif [[ "$(find $localPublicFolder | wc -l)" -gt 0 ]]; then
 	rm -r ${localPublicFolder:?}/*
 fi
-if [[ -d $publicFolder && "$(ls -A $publicFolder || wc -l)" -gt 0 ]]; then
+if [[ -d $publicFolder && "$(find $publicFolder | wc -l)" -gt 0 ]]; then
         cp -r $publicFolder/* $localPublicFolder/
 fi
 # TEMP - wordsrain
