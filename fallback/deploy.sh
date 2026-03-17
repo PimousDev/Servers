@@ -23,6 +23,9 @@ mode=${1-"prod"}
 # ---
 cd "$SCRIPT_DIR" || exit
 
+rm -r resource/sites/admin/*
+cp -r ../admin/src/* resource/sites/admin/
+
 if [[ $mode = "prod" ]]; then
 	docker compose up --build -d
 else
