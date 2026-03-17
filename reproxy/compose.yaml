@@ -1,4 +1,4 @@
-name: ps_con_www-reproxy
+name: ps_prj_www-reproxy
 
 services:
   reproxy:
