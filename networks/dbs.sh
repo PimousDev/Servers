@@ -15,12 +15,21 @@
 # No copy of the license is bundled with the script (As it is posted in a GitHub
 # gist). Please see https://www.gnu.org/licenses/.
 
-SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
-
-#shellcheck source=../../bin/dockerUtils.sh
-source "bin/dockerUtils.sh"
-
-source "$SCRIPT_DIR"/config.sh
+action=${1-"create"}
 
 # ---
-clean $DOCKER_CONTAINER_NAME $DOCKER_DATA_VOLUME_NAME
+case $action in
+	"create")
+	  	docker network create \
+	  		--subnet=172.31.0.64/26 \
+	  		--ipv6=false \
+	  		ps_net_dbs
+		;;
+	"remove"|"rm")
+		docker network rm ps_net_dbs
+		;;
+	*)
+		echo "Unknown '$action' action."
+		exit
+		;;
+esac
