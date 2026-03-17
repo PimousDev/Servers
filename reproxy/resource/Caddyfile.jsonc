@@ -30,7 +30,7 @@
 							"serverName": "Pimous Dev. Reproxy"
 						},
 
-						{ // Mapping domain to their folder and handler.
+						{ // Mapping domain to their service.
 							"handler": "map",
 							"source": "{http.request.host}",
 							"destinations": ["{service}"],
@@ -49,6 +49,22 @@
 						}
 					]
 				},
+
+				{ // wordsrain websocket server reverse proxy
+					"group": "exit",
+					"match": [{
+						"host": ["wordsrain.pimous.dev"],
+						"path_regexp": {
+							"name": "wordsrainSocket",
+							"pattern": "/socket.io/"
+						}
+					}],
+					"handle": [{
+						"handler": "reverse_proxy",
+						"upstreams": [{"dial": "s0.net.pimous.dev:31091"}]
+					}]
+				},
+
 
 				{ // Reverse proxy.
 					"group": "exit",

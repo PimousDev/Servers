@@ -23,8 +23,28 @@ mode=${1-"prod"}
 # ---
 cd "$SCRIPT_DIR" || exit
 
-rm -r resource/sites/admin/*
-cp -r ../admin/src/* resource/sites/admin/
+# admin
+localPublicFolder=resource/sites/admin/public
+if [[ ! -d localPublicFolder ]]; then
+	mkdir -p localPublicFolder
+elif [[ "$(ls -A localPublicFolder || wc -l)" -gt 0 ]]; then
+	rm -r ${localPublicFolder:?}/*
+fi
+cp -r ../admin/src/* localPublicFolder
+# admin
+
+# TEMP - wordsrain
+publicFolder=/home/wordsrain/www/public
+localPublicFolder=resource/sites/wordsrain/public
+if [[ ! -d localPublicFolder ]]; then
+	mkdir -p localPublicFolder
+elif [[ "$(ls -A localPublicFolder || wc -l)" -gt 0 ]]; then
+	rm -r ${localPublicFolder:?}/*
+fi
+if [[ -d $publicFolder && "$(ls -A $publicFolder || wc -l)" -gt 0 ]]; then
+        cp -r $publicFolder/* $localPublicFolder/
+fi
+# TEMP - wordsrain
 
 if [[ $mode = "prod" ]]; then
 	docker compose up --build -d
