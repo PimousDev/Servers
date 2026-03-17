@@ -17,25 +17,16 @@
 
 SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
-#shellcheck source=../../bin/dockerUtils.sh
-source "bin/dockerUtils.sh"
-
-source "$SCRIPT_DIR"/config.sh
-
 # ---
 mode=${1-"prod"}
-resourceDir=${2-"$SCRIPT_DIR/../resource"}
 
-# ---
-stop $DOCKER_CONTAINER_NAME
+# ---
+cd "$SCRIPT_DIR" || exit
 
-removeImage $DOCKER_IMAGE_REFERENCE
-buildImage $DOCKER_IMAGE_REFERENCE "$DOCKER_FILE" "$resourceDir"
+if [[ $mode = "prod" ]]; then
+	docker compose up --build -d
+else
+	docker compose up --build
+fi
 
-createVolumes $DOCKER_CONFIG_VOLUME_NAME $DOCKER_DATA_VOLUME_NAME
-
-createContainer \
-	$DOCKER_CONTAINER_NAME $DOCKER_IMAGE_REFERENCE "$mode" \
-	-v $DOCKER_CONFIG_VOLUME_NAME:/config \
-	-v $DOCKER_DATA_VOLUME_NAME:/data \
-	-p $EXPOSED_PORT:80
+cd - >/dev/null || exit

@@ -1,4 +1,3 @@
-#!/bin/bash
 # Pimous Servers (Scripts and Docker files)
 # Copyright &copy; 2025 - Pimous Dev. (https://www.pimous.dev/)
 #
@@ -15,14 +14,31 @@
 # No copy of the license is bundled with the script (As it is posted in a GitHub
 # gist). Please see https://www.gnu.org/licenses/.
 
-SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
+FROM caddy:2.11.2-builder-alpine AS builder
 
-#shellcheck source=../../bin/dockerUtils.sh
-source "bin/dockerUtils.sh"
+RUN xcaddy build \
+	--with github.com/caddyserver/jsonc-adapter
+	#--with github.com/dunglas/frankenphp/caddy
 
-source "$SCRIPT_DIR"/config.sh
+FROM caddy:2.11.2-alpine
 
-# ---
-clean $DOCKER_CONTAINER_NAME \
-	$DOCKER_CONFIG_VOLUME_NAME \
-	$DOCKER_DATA_VOLUME_NAME
+ENV CYUSER=caddy
+ENV CYCONFIG=/etc/caddy
+ENV CYROOT=/usr/share/caddy
+
+COPY --from=builder /usr/bin/caddy /usr/bin/caddy
+
+RUN rm $CYROOT/index.html
+COPY sites $CYROOT
+
+# Unprivileged user
+RUN	addgroup -S $CYUSER
+RUN adduser -S -G $CYUSER -h $CYROOT $CYUSER
+
+RUN chown -R $CYUSER:$CYUSER $XDG_CONFIG_HOME $XDG_DATA_HOME $CYROOT
+
+USER $CYUSER
+
+CMD ["sh", "-c", \
+	"caddy run --config /caddyFile --adapter jsonc" \
+]
