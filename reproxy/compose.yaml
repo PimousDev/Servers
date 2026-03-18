@@ -23,7 +23,8 @@ services:
         ipv4_address: 172.31.0.130
     ports:
       - "80:80"
-      - "443:443"
+      - "443:443/tcp"
+      - "443:443/udp"
 
 volumes:
   vol-config:
