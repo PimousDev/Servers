@@ -43,8 +43,9 @@
 							"handler": "headers",
 							"response": {
 								"set": {
-									"Server": ["{http.vars.serverName}"]
-								}
+									"Via": ["{http.vars.serverName}"]
+								},
+								"deferred": true
 							}
 						}
 					]
@@ -89,14 +90,6 @@
 								"ns12.infomaniak.ch"
 							]},
 							"refresh": "1m"
-						},
-						"headers": {
-							"response": {
-								"set": {
-									"Via": ["{http.vars.serverName}"]
-								},
-								"deferred": true
-							}
 						}
 					}]
 				}
