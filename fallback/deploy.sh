@@ -42,7 +42,7 @@ elif [[ "$(find $localPublicFolder | wc -l)" -gt 0 ]]; then
 	rm -r ${localPublicFolder:?}/*
 fi
 if [[ -d $publicFolder && "$(find $publicFolder | wc -l)" -gt 0 ]]; then
-        cp -r $publicFolder/* $localPublicFolder/
+	cp -r $publicFolder/* $localPublicFolder/
 fi
 # TEMP - wordsrain
 

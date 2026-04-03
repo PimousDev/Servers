@@ -20,10 +20,10 @@ action=${1-"create"}
 # ---
 case $action in
 	"create")
-	  	docker network create \
-	  		--subnet=172.31.0.64/26 \
-	  		--ipv6=false \
-	  		ps_net_dbs
+		docker network create \
+			--subnet=172.31.0.64/26 \
+			--ipv6=false \
+			ps_net_dbs
 		;;
 	"remove"|"rm")
 		docker network rm ps_net_dbs
