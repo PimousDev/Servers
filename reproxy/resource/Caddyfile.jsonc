@@ -92,7 +92,10 @@
 						},
 						"headers": {
 							"response": {
-								"delete": ["Via"]
+								"set": {
+									"Via": ["{http.vars.serverName}"]
+								},
+								"deferred": true
 							}
 						}
 					}]

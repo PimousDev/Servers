@@ -61,7 +61,8 @@
 									"Server": [
 										"{http.vars.serverName} - {folder}"
 									]
-								}
+								},
+								"deferred": true
 							}
 						}
 					]
