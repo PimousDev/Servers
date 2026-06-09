@@ -17,12 +17,18 @@
 
 SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
-#shellcheck source=../../bin/dockerUtils.sh
-source "bin/dockerUtils.sh"
-
-source "$SCRIPT_DIR"/config.sh
+# ---
+full=${1-"no"}
 
 # ---
-clean $DOCKER_CONTAINER_NAME \
-	$DOCKER_CONFIG_VOLUME_NAME \
-	$DOCKER_DATA_VOLUME_NAME
+cd "$SCRIPT_DIR" || exit
+
+if [[ $full = "yes" ]]; then
+	docker compose down -v
+else
+	docker compose down
+fi
+
+docker image rm pimousservers/pgsql:18.3-alpine3.23
+
+cd - >/dev/null || exit

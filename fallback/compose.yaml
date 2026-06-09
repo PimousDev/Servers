@@ -1,0 +1,38 @@
+name: ps_prj_www-fallback
+
+services:
+  fallback:
+    container_name: ps_con_www-fallback_main
+
+    image: pimousservers/fallback:2.11.2-alpine
+    build:
+      context: resource
+      dockerfile: ../Dockerfile
+      network: host
+
+    volumes:
+      - vol-config:/config
+      - vol-data:/data
+    configs:
+      - caddyFile
+
+    networks:
+      net-www:
+        ipv4_address: 172.31.0.131
+    ports:
+      - "31001:80"
+
+volumes:
+  vol-config:
+    name: ps_vol_www-fallback_config
+  vol-data:
+    name: ps_vol_www-fallback_data
+configs:
+  caddyFile:
+    name: ps_cnf_www-fallback_config
+    file: resource/Caddyfile.jsonc
+
+networks:
+  net-www:
+    name: ps_net_www
+    external: true

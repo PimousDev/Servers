@@ -1,4 +1,3 @@
-#!/bin/bash
 # Pimous Servers (Scripts and Docker files)
 # Copyright &copy; 2025 - Pimous Dev. (https://www.pimous.dev/)
 #
@@ -15,14 +14,17 @@
 # No copy of the license is bundled with the script (As it is posted in a GitHub
 # gist). Please see https://www.gnu.org/licenses/.
 
-SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
+FROM postgres:18.3-alpine3.23
 
-#shellcheck source=../../bin/dockerUtils.sh
-source "bin/dockerUtils.sh"
+ENV PGUSER=postgres
+ENV PGHOME=/var/lib/postgresql
+ENV ENTRYPOINT_DIR=/docker-entrypoint-initdb.d
 
-source "$SCRIPT_DIR"/config.sh
+COPY --chown=$PGUSER:$PGUSER --chmod=0600 *.key $PGHOME
 
-# ---
-clean $DOCKER_CONTAINER_NAME \
-	$DOCKER_CONFIG_VOLUME_NAME \
-	$DOCKER_DATA_VOLUME_NAME
+COPY *.sql $ENTRYPOINT_DIR
+
+CMD ["postgres", \
+	"-c", "config_file=/config", \
+	"-c", "hba_file=/hba" \
+]

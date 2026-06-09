@@ -1,3 +1,4 @@
+#!/bin/bash
 # Pimous Servers (Scripts and Docker files)
 # Copyright &copy; 2025 - Pimous Dev. (https://www.pimous.dev/)
 #
@@ -14,24 +15,18 @@
 # No copy of the license is bundled with the script (As it is posted in a GitHub
 # gist). Please see https://www.gnu.org/licenses/.
 
-FROM postgres:17.4-alpine3.21
+SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
-ENV PGUSER=postgres
-ENV PGHOME=/var/lib/postgresql
-ENV PGCONFIG=/etc/postgresql
-ENV ENTRYPOINT_DIR=/docker-entrypoint-initdb.d
+# ---
+mode=${1-"prod"}
 
-RUN mkdir -p $PGCONFIG
+# ---
+cd "$SCRIPT_DIR" || exit
 
-COPY --chown=$PGUSER:$PGUSER --chmod=0600 *.crt *.key $PGHOME
+if [[ $mode = "prod" ]]; then
+	docker compose up --build -d
+else
+	docker compose up --build
+fi
 
-COPY postgresql.conf $PGCONFIG
-COPY pg_hba.conf $PGCONFIG
-
-COPY *.sql *.sh $ENTRYPOINT_DIR
-
-CMD ["postgres", \
-	"-debug", \
-	"-c", "config_file=/etc/postgresql/postgresql.conf", \
-	"-c", "hba_file=/etc/postgresql/pg_hba.conf" \
-]
+cd - >/dev/null || exit

@@ -15,7 +15,7 @@
 	},
 
 	"apps": {
-		"http": {"servers": {"Reproxy": {
+		"http": {"servers": {"ReProxy": {
 			"listen": [":80", ":443"],
 			"listener_wrappers": [
 				{"wrapper": "http_redirect"},
@@ -30,7 +30,7 @@
 							"serverName": "Pimous Dev. Reproxy"
 						},
 
-						{ // Mapping domain to their folder and handler.
+						{ // Mapping domain to their service.
 							"handler": "map",
 							"source": "{http.request.host}",
 							"destinations": ["{service}"],
@@ -43,12 +43,29 @@
 							"handler": "headers",
 							"response": {
 								"set": {
-									"Server": ["{http.vars.serverName}"]
-								}
+									"Via": ["{http.vars.serverName}"]
+								},
+								"deferred": true
 							}
 						}
 					]
 				},
+
+				{ // wordsrain websocket server reverse proxy
+					"group": "exit",
+					"match": [{
+						"host": ["wordsrain.pimous.dev"],
+						"path_regexp": {
+							"name": "wordsrainSocket",
+							"pattern": "/socket.io/"
+						}
+					}],
+					"handle": [{
+						"handler": "reverse_proxy",
+						"upstreams": [{"dial": "s0.net.pimous.dev:31091"}]
+					}]
+				},
+
 
 				{ // Reverse proxy.
 					"group": "exit",
@@ -73,11 +90,6 @@
 								"ns12.infomaniak.ch"
 							]},
 							"refresh": "1m"
-						},
-						"headers": {
-							"response": {
-								"delete": ["Via"]
-							}
 						}
 					}]
 				}
@@ -104,7 +116,7 @@
 							"dns": {
 								"provider":  {
 									"name": "infomaniak",
-									"api_token": "{file./etc/caddy/infomaniak_api-token}"
+									"api_token": "{file./run/secrets/dnsApiToken}"
 								},
 								"ttl": "1h"
 							}

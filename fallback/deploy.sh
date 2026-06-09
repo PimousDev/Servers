@@ -17,25 +17,39 @@
 
 SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
-#shellcheck source=../../bin/dockerUtils.sh
-source "bin/dockerUtils.sh"
-
-source "$SCRIPT_DIR"/config.sh
-
 # ---
 mode=${1-"prod"}
-resourceDir=${2-"$SCRIPT_DIR/../resource"}
 
 # ---
-stop $DOCKER_CONTAINER_NAME
+cd "$SCRIPT_DIR" || exit
 
-removeImage $DOCKER_IMAGE_REFERENCE
-buildImage $DOCKER_IMAGE_REFERENCE "$DOCKER_FILE" "$resourceDir"
+# admin
+localPublicFolder=resource/sites/admin/public
+if [[ ! -d $localPublicFolder ]]; then
+	mkdir -p $localPublicFolder
+elif [[ "$(find $localPublicFolder | wc -l)" -gt 0 ]]; then
+	rm -r ${localPublicFolder:?}/*
+fi
+cp -r ../admin/src/* $localPublicFolder
+# admin
 
-createVolumes $DOCKER_DATA_VOLUME_NAME
+# TEMP - wordsrain
+publicFolder=/home/wordsrain/www/public
+localPublicFolder=resource/sites/wordsrain/public
+if [[ ! -d $localPublicFolder ]]; then
+	mkdir -p $localPublicFolder
+elif [[ "$(find $localPublicFolder | wc -l)" -gt 0 ]]; then
+	rm -r ${localPublicFolder:?}/*
+fi
+if [[ -d $publicFolder && "$(find $publicFolder | wc -l)" -gt 0 ]]; then
+	cp -r $publicFolder/* $localPublicFolder/
+fi
+# TEMP - wordsrain
 
-createContainer \
-	$DOCKER_CONTAINER_NAME $DOCKER_IMAGE_REFERENCE "$mode" \
-	-e POSTGRES_PASSWORD=empty \
-	-v $DOCKER_DATA_VOLUME_NAME:/var/lib/postgresql/data \
-	-p $EXPOSED_PORT:5432
+if [[ $mode = "prod" ]]; then
+	docker compose up --build -d
+else
+	docker compose up --build
+fi
+
+cd - >/dev/null || exit
