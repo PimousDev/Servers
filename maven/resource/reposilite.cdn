@@ -1,0 +1,19 @@
+hostname: 172.31.0.133
+port: 31040
+database: sqlite reposilite.db
+
+sslEnabled: false
+sslPort: 443
+keyPath: ${WORKING_DIRECTORY}/cert.pem ${WORKING_DIRECTORY}/key.pem
+enforceSsl: false
+
+webThreadPool: 6
+ioThreadPool: 6
+databaseThreadPool: 1
+compressionStrategy: gzip
+idleTimeout: 30000
+
+bypassExternalCache: true
+cachedLogSize: 50
+defaultFrontend: true
+debugEnabled: false
