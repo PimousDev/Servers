@@ -11,9 +11,11 @@ services:
     configs:
       - config
       - sharedConfig
+    env_file:
+      - .env
     environment:
       JAVA_OPTS: -Xmx128M
-      REPOSILITE_OPTS: --local-configuration=/config --shared-configuration=/sharedConfig
+      REPOSILITE_OPTS: ${REPOSILITE_OPTS} --local-configuration=/config --shared-configuration=/sharedConfig
 
     networks:
       net-www:
