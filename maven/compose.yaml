@@ -1,0 +1,38 @@
+name: ps_prj_www-maven
+
+services:
+  reposilite:
+    container_name: ps_con_www-maven_main
+
+    image: dzikoysk/reposilite:3.5.28
+
+    volumes:
+      - vol-data:/app/data
+    configs:
+      - config
+      - sharedConfig
+    environment:
+      JAVA_OPTS: -Xmx128M
+      REPOSILITE_OPTS: --local-configuration=/config --shared-configuration=/sharedConfig
+
+    networks:
+      net-www:
+        ipv4_address: 172.31.0.133
+    ports:
+      - "31040:80"
+
+volumes:
+  vol-data:
+    name: ps_vol_www-maven_data
+configs:
+  config:
+    name: ps_cnf_dbs-maven_config
+    file: resource/reposilite.cdn
+  sharedConfig:
+    name: ps_cnf_dbs-maven_sharedConfig
+    file: resource/reposilite.shared.json
+
+networks:
+  net-www:
+    name: ps_net_www
+    external: true

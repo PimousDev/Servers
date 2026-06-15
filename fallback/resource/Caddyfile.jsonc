@@ -10,7 +10,7 @@
 		"logs": {"default": {
 			"writer": {"output": "stdout"},
 			"encoder": {"format": "console"},
-			"level": "INFO"
+			"level": "DEBUG"
 		}}
 	},
 
@@ -101,6 +101,24 @@
 					}]
 				}
 			],
+
+			"errors": {"routes": [
+				{
+					"handle": [
+						{ // Our own Server header value.
+							"handler": "headers",
+							"response": {
+								"set": {
+									"Server": [
+										"{http.vars.serverName} - {folder}"
+									]
+								},
+								"deferred": false
+							}
+						}
+					]
+				}
+			]},
 
 			"logs": {
 				"default_logger_name": "default"

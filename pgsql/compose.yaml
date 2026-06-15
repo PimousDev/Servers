@@ -27,7 +27,7 @@ services:
       POSTGRES_PASSWORD: empty
 
     networks:
-      net-www:
+      net-dbs:
         ipv4_address: 172.31.0.66
     ports:
       - "31010:5432"
@@ -50,6 +50,6 @@ configs:
     file: resource/pimousdev-usr.chain.crt
 
 networks:
-  net-www:
+  net-dbs:
     name: ps_net_dbs
     external: true

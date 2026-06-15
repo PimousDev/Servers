@@ -1,0 +1,17 @@
+hostname: 172.31.0.133
+port: 80
+database: sqlite reposilite.db
+
+sslEnabled: false
+enforceSsl: false
+
+webThreadPool: 6
+ioThreadPool: 6
+databaseThreadPool: 1
+compressionStrategy: gzip
+idleTimeout: 30000
+
+bypassExternalCache: true
+cachedLogSize: 50
+defaultFrontend: true
+debugEnabled: false

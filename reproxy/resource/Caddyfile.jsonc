@@ -25,25 +25,24 @@
 			"routes": [
 				{ // Definitions and mapping.
 					"handle": [
-						{
-							"handler": "vars",
-							"serverName": "Pimous Dev. Reproxy"
-						},
-
 						{ // Mapping domain to their service.
 							"handler": "map",
 							"source": "{http.request.host}",
 							"destinations": ["{service}"],
 							"mappings": [
+								{
+									"input": "maven.pimous.dev",
+									"outputs": ["maven"]
+								}
 							],
 							"defaults": ["fallback"]
 						},
 
-						{ // Our own Server header value.
+						{ // Our own Server and Via header value.
 							"handler": "headers",
 							"response": {
 								"set": {
-									"Via": ["{http.vars.serverName}"]
+									"Via": ["Pimous Dev. Reproxy"]
 								},
 								"deferred": true
 							}
@@ -79,7 +78,7 @@
 						"transport": {
 							"protocol": "http"
 						},
-						//"upstreams": [{"dial": "172.17.0.1:31001"}],
+						//"upstreams": [{"dial": "172.31.0.131:31001"}],
 						"dynamic_upstreams": {
 							"source": "srv",
 							"name": "pimous.dev",
@@ -94,6 +93,22 @@
 					}]
 				}
 			],
+
+			"errors": {"routes": [
+				{
+					"handle": [
+						{ // Our own Server header value.
+							"handler": "headers",
+							"response": {
+								"set": {
+									"Server": ["Pimous Dev. Reproxy"]
+								},
+								"deferred": false
+							}
+						}
+					]
+				}
+			]},
 
 			"logs": {
 				"default_logger_name": "default"
