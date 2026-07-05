@@ -31,8 +31,8 @@
 							"destinations": ["{service}"],
 							"mappings": [
 								{
-									"input": "maven.pimous.dev",
-									"outputs": ["maven"]
+									"input": "container.pimous.dev",
+									"outputs": ["container"]
 								}
 							],
 							"defaults": ["fallback"]

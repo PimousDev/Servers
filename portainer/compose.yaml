@@ -13,6 +13,8 @@ services:
     networks:
       www:
         ipv4_address: 172.31.0.134
+    ports:
+      - "31004:9000"
 
     restart: unless-stopped
 
