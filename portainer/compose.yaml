@@ -1,0 +1,26 @@
+name: ps_prj_www-portainer
+
+services:
+  portainer:
+    container_name: ps_con_www-portainer
+
+    image: portainer/portainer-ce:2.29.2-alpine
+
+    volumes:
+      - data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    networks:
+      www:
+        ipv4_address: 172.31.0.134
+
+    restart: unless-stopped
+
+volumes:
+  data:
+    name: ps_vol_www-portainer_data
+
+networks:
+  www:
+    name: ps_net_www
+    external: true
