@@ -4,7 +4,7 @@ services:
   portainer:
     container_name: ps_con_www-portainer
 
-    image: portainer/portainer-ee:2.29.2-alpine
+    image: portainer/portainer-ee:2.39.4-alpine
 
     volumes:
       - data:/data
