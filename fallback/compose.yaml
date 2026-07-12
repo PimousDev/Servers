@@ -30,9 +30,13 @@ volumes:
 configs:
   caddyFile:
     name: ps_cnf_www-fallback_config
-    file: resource/Caddyfile.jsonc
+    file: resource/Caddyfile
 
 networks:
   net-www:
     name: ps_net_www
+    ipam:
+      config:
+        - subnet: 172.31.0.128/25
+    enable_ipv6: false
     external: true

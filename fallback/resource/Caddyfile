@@ -1,0 +1,64 @@
+{
+	admin off
+
+	log default {
+		output stdout
+		format console
+		level DEBUG
+	}
+
+	servers :80 {
+		name "Fallback"
+    	trace
+	}
+
+	auto_https off
+}
+
+:80 {
+	log default
+
+	# Some pre-treatments
+	vars {
+		serverName "Pimous Dev. Fallback"
+		root "{env.CYROOT}"
+		relPublicDir "public"
+	}
+
+	map "{http.request.host}" "{folder}" "{handler}" {
+		pimous.dev "master" "file_server"
+		~(?<sdn>.+)\.pimous\.dev$ "$sdn" "file_server"
+		~localhost|127\.0\.0\.1$ "local" "file_server"
+		default "whereami" "file_server"
+	}
+
+	header >Server "{http.vars.serverName} - {folder}"
+
+	# Output
+	@exist {
+		not vars "{folder}" "whereami"
+		file {
+    		try_files "{folder}/"
+		}
+	}
+	handle @exist {
+		@file-server vars "{handler}" "file_server"
+		handle @file-server {
+			file_server {
+				root "{vars.root}/{folder}/{vars.relPublicDir}"
+			}
+		}
+	}
+	handle {
+		rewrite ?path={http.request.uri}&{query}
+
+		file_server {
+			root "{vars.root}/whereami/{vars.relPublicDir}"
+			status 503
+		}
+	}
+
+	handle_errors {
+		header >Server "{http.vars.serverName} - {folder}"
+	}
+}

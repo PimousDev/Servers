@@ -14,19 +14,11 @@
 # No copy of the license is bundled with the script (As it is posted in a GitHub
 # gist). Please see https://www.gnu.org/licenses/.
 
-FROM caddy:2.11.2-builder-alpine AS builder
-
-RUN xcaddy build \
-	--with github.com/caddyserver/jsonc-adapter
-	#--with github.com/dunglas/frankenphp/caddy
-
 FROM caddy:2.11.2-alpine
 
 ENV CYUSER=caddy
 ENV CYCONFIG=/etc/caddy
 ENV CYROOT=/usr/share/caddy
-
-COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 
 RUN rm $CYROOT/index.html
 COPY sites $CYROOT
@@ -39,6 +31,4 @@ RUN chown -R $CYUSER:$CYUSER $XDG_CONFIG_HOME $XDG_DATA_HOME $CYROOT
 
 USER $CYUSER
 
-CMD ["sh", "-c", \
-	"caddy run --config /caddyFile --adapter jsonc" \
-]
+CMD ["caddy", "run", "--config", "/caddyFile"]
