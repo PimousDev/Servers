@@ -12,16 +12,25 @@
 # A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
 # details.
 #
-# No copy of the license is bundled with the script. Please see
-# https://www.gnu.org/licenses/.
-#-------------------------------------------------------------------------------
-# @throw 1 Unkown error.
-# @throw 2 Bad usage.
-#-------------------------------------------------------------------------------
+# No copy of the license is bundled with the script (As it is posted in a GitHub
+# gist). Please see https://www.gnu.org/licenses/.
 
-groupadd ssh-allowed -U debian
+SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
+
+# ---
+echo "# Configuring ssh"
+
+groupadd ssh-allowed
 groupadd sftp-allowed
 
 mkdir /home/sftphomes
 chmod 710 /home/sftphomes
 chown root:sftp-allowed /home/sftphomes
+
+cp "$SCRIPT_DIR/resource/sshd_config.d"/* /etc/ssh/sshd_config.d/
+
+systemctl restart sshd
+
+# ---
+echo "# Configuring syslog"
+#apt install -y rsyslog --no-install-recommends --no-install-suggests

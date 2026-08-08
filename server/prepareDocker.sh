@@ -19,62 +19,29 @@
 #
 # @throw 1 Unkown error.
 # @throw 2 Bad usage.
-# @throw 3 "Docker" partition not found.
 #-------------------------------------------------------------------------------
 
-DOCKER_PARTITION_LABEL=Docker
-
-FSTAB_LINE_FORMAT="PARTUUID=%s %s %s noatime,nodiratime 0 2"
-DOCKER_SOURCE_FORMAT="deb [arch=%s signed-by=%s] https://download.docker.com/linux/debian %s stable"
-
-PARTITION_FORMAT=ext4
-FINAL_MOUNT_POINT=/var/lib/docker
-FSTAB_FILE_PATH=/etc/fstab
-DOCKER_APT_SOURCE_FILE=/etc/apt/sources.list.d/docker.list
 DOCKER_KEYRING_FILE=/etc/apt/keyrings/docker.asc
 
-# ---
-echo "## FORMATTING TO $PARTITION_FORMAT DOCKER PARTITION"
-part=$(blkid -t PARTLABEL="$DOCKER_PARTITION_LABEL" -o device)
-
-if [[ ! -e $part ]]; then
-	echo "Partition doesn't exist... ($part)."
-	exit 3
-fi
-
-yes | mkfs -t $PARTITION_FORMAT "$part" || exit 1
-
-echo "## MOUNTING ON $FINAL_MOUNT_POINT AND UPDATING $FSTAB_FILE_PATH"
-mkdir $FINAL_MOUNT_POINT
-mount "$part" $FINAL_MOUNT_POINT
-
-# shellcheck disable=SC2059
-printf "$FSTAB_LINE_FORMAT" \
-		"$(blkid -t LABEL="$DOCKER_PARTITION_LABEL" -s PARTUUID -o value "$part")" \
-		$FINAL_MOUNT_POINT \
-		$PARTITION_FORMAT \
-	> $FSTAB_FILE_PATH
-
-echo "## ADDING DOCKER APT SOURCES"
+echo "# Adding docker apt sources"
 curl -fsSL https://download.docker.com/linux/debian/gpg \
 	-o $DOCKER_KEYRING_FILE
 sudo chmod a+r $DOCKER_KEYRING_FILE
 
-# shellcheck disable=SC2059
-printf "$DOCKER_SOURCE_FORMAT" \
+printf "deb [arch=%s signed-by=%s] https://download.docker.com/linux/debian %s stable" \
 		"$(dpkg --print-architecture)" \
 		$DOCKER_KEYRING_FILE \
 		"$(. /etc/os-release && echo "$VERSION_CODENAME")" \
-	> $DOCKER_APT_SOURCE_FILE
+	> /etc/apt/sources.list.d/docker.list
 
 sudo apt update
 
-echo "## INSTALLING DOCKER"
-sudo apt install -y xfsprogs git docker-ce docker-buildx-plugin \
+echo "# Installing docker"
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin \
 	--no-install-recommends --no-install-suggests
 
 # ---
-echo "## ADDING ADMIN USER TO DOCKER GROUP"
+echo "# Adding admin user to docker group"
 echo -n "What is the admin user? "
 read -r user
 

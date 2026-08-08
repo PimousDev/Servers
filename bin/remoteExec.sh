@@ -17,7 +17,7 @@
 #-------------------------------------------------------------------------------
 # A script for SSH remote execution.
 #
-# @throw 1 Unkown error.
+# @throw 1 Unknown error.
 # @throw 2 Bad usage.
 # @throw 3 No such command bash file.
 #-------------------------------------------------------------------------------
@@ -51,15 +51,15 @@ fi
 remoteAuthority="$user@$ip"
 destFile="$SCRIPT_DESTINATION_DIR/$(basename "$command")"
 
-echo "# Sending $command script to $ip with user $user..."
+echo "## Sending $command script to $ip with user $user..."
 scp "$command" "$remoteAuthority:$destFile"
 # shellcheck disable=SC2029
 ssh "$remoteAuthority" "chmod u+x $destFile"
 
 if [[ ${#cmdArgs[@]} -gt 0 ]]; then
-	echo "# Executing sent $command with argument(s) '${cmdArgs[*]}'..."
+	echo "## Executing sent $command with argument(s) '${cmdArgs[*]}'..."
 else
-	echo "# Executing sent $command..."
+	echo "## Executing sent $command..."
 fi
 # shellcheck disable=SC2029
 ssh "$remoteAuthority" "exec $sudoMode $destFile ${cmdArgs[*]}"
