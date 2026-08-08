@@ -4,57 +4,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Assignations - Pimous Dev. Servers</title>
-
-	<style>
-		:root{
-			--color-used: palegreen;
-			--color-assigned: palegoldenrod;
-			--color-reserved: palevioletred;
-		}
-		table{
-			border-collapse: collapse;
-		}
-		th, td{
-			padding: 4px;
-
-			border: 1px solid black;
-		}
-
-		thead th{
-			background-color: slategray;
-		}
-		thead tr.sub th{
-			background-color: lightslategray;
-		}
-		tbody tr.cat th{
-			background-color: darkgray;
-		}
-		tbody th{
-			background-color: lightgray;
-		}
-
-		.used, .assigned, .reserved{
-			text-align: center;
-		}
-		td.used{ background-color: var(--color-used); }
-		span.used{ color: var(--color-used); }
-		td.assigned{ background-color: palegoldenrod; }
-		span.assigned{ color: var(--color-assigned); }
-		td.used::after, td.assigned::after{
-			content: "✓";
-		}
-		td.reserved{ background-color: palevioletred; }
-		span.reserved{ color: var(--color-reserved); }
-		td.reserved::after{
-			content: "𐄂";
-		}
-
-		footer > p{
-			margin-block: 0;
-
-			font-size: 0.75rem;
-		}
-	</style>
+	<link rel="stylesheet" href="/style.css">
 </head>
 <body>
 	<h1>Assignations - Pimous Dev. Servers</h1>
