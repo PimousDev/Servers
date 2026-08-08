@@ -26,6 +26,8 @@ services:
       - "443:443/tcp"
       - "443:443/udp"
 
+    restart: unless-stopped
+
 volumes:
   vol-config:
     name: ps_vol_www-reproxy_config

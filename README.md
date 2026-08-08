@@ -13,21 +13,29 @@ See [admin.pimous.dev](https://admin.pimous.dev/).
 
 ### Technician installation guide
 #### First setup
-Execute those remotely:
+Execute those commands remotely:
 ```bash
 bash bin/remoteExec.sh <host> debian 1 server/init.sh debian
 bash bin/remoteExec.sh <host> debian 1 server/disk.sh <yes|no>
 bash bin/remoteExec.sh <host> debian 1 server/docker.sh
 ```
 
-Copy ssh keys and certificates.
+Copy ssh keys and certificates, and apply right mode to keys.
 
-Then, execute those once connected onto the server:
+Clone this repo on your personal admin account:
 ```bash
-bash configurate.sh
+eval $(ssh-agent -s)
+ssh-add ~/.ssh/id_ed25519_s0-deploy-key
+git clone git@github.com:PimousDev/Servers.git
 ```
 
-Thus, the server is ready!
+Execute those commands once connected onto the server:
+```bash
+bash configurate.sh
+sudo groupmod -a -U debian,<users> ssh-allowed
+```
+
+The server is now ready!
 
 ## License
 Pimous Servers (Organization, Scripts and Docker files)  

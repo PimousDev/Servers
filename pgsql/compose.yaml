@@ -32,6 +32,8 @@ services:
     ports:
       - "31010:5432"
 
+    restart: unless-stopped
+
 volumes:
   vol-data:
     name: ps_vol_dbs-pgsql_data

@@ -22,6 +22,8 @@ services:
     ports:
       - "31001:80"
 
+    restart: unless-stopped
+
 volumes:
   vol-config:
     name: ps_vol_www-fallback_config
