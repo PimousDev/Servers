@@ -2,34 +2,35 @@
 # Pimous Servers (Scripts and Docker files)
 # Copyright &copy; 2026 - Pimous Dev. (https://www.pimous.dev/)
 #
-# These programs are free software: you can redistribute them and/or modify them
-# under the terms of the GNU Lesser General Public License version 3 as
-# published by the Free Software Foundation.
+# This script is free software: you can redistribute it and/or modify it under
+# the terms of the GNU Lesser General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your option) any
+# later version.
 #
-# The latters are distributed in the hope that they will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-# FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+# The latter are distributed in the hope that it will be useful, but WITHOUT ANY
+# WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+# A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
 # details.
 #
-# You should have received a copy of the GNU General Public License and the GNU
-# Lesser General Public License along with the programs. If not,
-# see https://www.gnu.org/licenses/.
+# No copy of the license is bundled with the script (As it is posted in a GitHub
+# gist). Please see https://www.gnu.org/licenses/.
 #-------------------------------------------------------------------------------
-# Initialization and preparation script for Infomaniak VPS.
-#
-# @throw 1 Unknown error.
-# @throw 2 Bad usage.
-# @throw 3 No such old user.
+# Initialization and essential preparation script of S0.
 #-------------------------------------------------------------------------------
 
 AUTH_KEYS_FILE_PATH=/home/%s/.ssh/authorized_keys
 
 # ---
+if [[ $# -lt 1 ]]; then
+	echo "Usage: init.sh <admin>" 1>&2
+	exit 2
+fi
+
 adminUser=$1
 
 if ! id -u "$adminUser" &>/dev/null; then
 	echo "No such $adminUser admin user."
-	exit 3
+	exit 1
 fi
 
 # ---
@@ -54,6 +55,7 @@ read -r user
 echo "# Creating $user user for administration"
 adduser "$user" --disabled-password 
 usermod "$user" --groups users,staff
+echo
 
 echo "# Copying authorized_keys file from $adminUser"
 # shellcheck disable=SC2059

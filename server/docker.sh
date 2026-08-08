@@ -1,6 +1,6 @@
 #!/bin/bash
 # Pimous Servers (Scripts and Docker files)
-# Copyright &copy; 2025 - Pimous Dev. (https://www.pimous.dev/)
+# Copyright &copy; 2026 - Pimous Dev. (https://www.pimous.dev/)
 #
 # This script is free software: you can redistribute it and/or modify it under
 # the terms of the GNU Lesser General Public License as published by the Free
@@ -15,14 +15,13 @@
 # No copy of the license is bundled with the script (As it is posted in a GitHub
 # gist). Please see https://www.gnu.org/licenses/.
 #-------------------------------------------------------------------------------
-# Installation script of docker-ce on prepared Infomaniak VPS.
-#
-# @throw 1 Unkown error.
-# @throw 2 Bad usage.
+# Preparation and installation script of docker on S0.
 #-------------------------------------------------------------------------------
 
-DOCKER_KEYRING_FILE=/etc/apt/keyrings/docker.asc
+SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
+DOCKER_KEYRING_FILE=/etc/apt/keyrings/docker.asc
+# ---
 echo "# Adding docker apt sources"
 curl -fsSL https://download.docker.com/linux/debian/gpg \
 	-o $DOCKER_KEYRING_FILE

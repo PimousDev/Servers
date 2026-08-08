@@ -14,6 +14,9 @@
 #
 # No copy of the license is bundled with the script (As it is posted in a GitHub
 # gist). Please see https://www.gnu.org/licenses/.
+#-------------------------------------------------------------------------------
+# Configuration and finalization script of S0.
+#-------------------------------------------------------------------------------
 
 SCRIPT_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 

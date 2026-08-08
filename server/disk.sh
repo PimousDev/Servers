@@ -15,12 +15,7 @@
 # No copy of the license is bundled with the script (As it is posted in a GitHub
 # gist). Please see https://www.gnu.org/licenses/.
 #-------------------------------------------------------------------------------
-# Setup script of our data disk. sfdisk script may be from variables.
-#
-# @throw 1 Unknown error.
-# @throw 2 Bad usage.
-# @throw 3 Disk not found.
-# @throw 3 Partition not found.
+# Setup script of S0's data disk.
 #-------------------------------------------------------------------------------
 
 SFDISK_SCRIPT=$(cat << EOF
@@ -36,58 +31,77 @@ EOF
 )
 
 # ---
+if [[ $# -lt 1 ]]; then
+	echo "Usage: disk.sh <isDiskPrepared=yes|no>" 1>&2
+	exit 2
+fi
+
+if [[ $1 == "yes" ]]; then
+	diskAlreadyPrepared=true
+elif [[ $1 == "no" ]]; then
+	diskAlreadyPrepared=false
+else
+	echo "Invalid boolean for isDiskPrepared; be careful."
+	exit 2
+fi
+
+# ---
 setupPartition(){
 	label=$1
 	format=$2
 	mountPoint=$3
-
-	echo "# Formating $label partition to $format..."
 	part=$(blkid -t PARTLABEL="$label" -o device)
 
-	if [[ ! -e $part ]]; then
-		echo "Partition doesn't exist... ($part)."
-		exit 3
-	fi
+	if [[ $diskAlreadyPrepared == false ]]; then
+		echo "# Formating $label ($part) partition to $format..."
 
-	yes | mkfs -t "$format" "$part" || exit 1
+		if [[ ! -e $part ]]; then
+			echo "Partition doesn't exist... ($part)."
+			exit 3
+		fi
 
-	if [[ -d $mountPoint ]]; then
-		echo "# Detected existing $mountPoint, copying into new $label partition..."
+		yes | mkfs -t "$format" "$part" || exit 1
 
-		mkdir -p /mnt/tmp
-		mount "$part" /mnt/tmp
+		if [[ -d $mountPoint ]]; then
+			echo "# Detected existing $mountPoint, copying into new $label partition..."
 
-		cp -fr "$mountPoint/." /mnt/tmp --preserve=all
+			mkdir -p /mnt/tmp
+			mount "$part" /mnt/tmp
 
-		umount /mnt/tmp
-		rmdir /mnt/tmp
+			cp -fr "$mountPoint/." /mnt/tmp --preserve=all
+
+			umount /mnt/tmp
+			rmdir /mnt/tmp
+		fi
 	fi
 
 	echo "# Mounting $label on $mountPoint and updating fstab..."
 	mkdir "$mountPoint"
 	mount "$part" "$mountPoint"
 
-	printf "PARTUUID=%s %s %s noatime,nodiratime 0 2" \
+	printf "PARTUUID=%s %s %s noatime,nodiratime 0 2\n" \
 			"$(blkid -t LABEL="$label" -s PARTUUID -o value "$part")" \
 			"$mountPoint" \
 			"$format" \
-		> /etc/fstab
+		>> /etc/fstab
 }
 
 # ---
-echo "# Partitioning and mounting data disk..."
-lsblk
-echo -n "Which disk is the data disk? "
-read -r disk
-disk=/dev/$disk
+if [[ $diskAlreadyPrepared == false ]]; then
+	echo "# Partitioning and mounting data disk..."
+    lsblk
+    echo -n "Which disk is the data disk? "
+    read -r disk
+    disk=/dev/$disk
 
-if [[ ! -e $disk ]]; then
-	echo "Disk doesn't exist ($disk)."
-	exit 3
+    if [[ ! -e $disk ]]; then
+    	echo "Disk doesn't exist ($disk)."
+    	exit 3
+    fi
+
+    echo "# Creating gpt partition table..."
+    sfdisk "$disk" --wipe always <<< "$SFDISK_SCRIPT" || exit 1
 fi
-
-echo "# Creating gpt partition table..."
-sfdisk "$disk" --wipe always <<< "$SFDISK_SCRIPT" || exit 1
 
 # ---
 setupPartition "Home" ext4 /home

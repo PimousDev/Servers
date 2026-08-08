@@ -12,7 +12,22 @@ because of their environmental concerns.
 See [admin.pimous.dev](https://admin.pimous.dev/).
 
 ### Technician installation guide
-_Soon..._
+#### First setup
+Execute those remotely:
+```bash
+bash bin/remoteExec.sh <host> debian 1 server/init.sh debian
+bash bin/remoteExec.sh <host> debian 1 server/disk.sh <yes|no>
+bash bin/remoteExec.sh <host> debian 1 server/docker.sh
+```
+
+Copy ssh keys and certificates.
+
+Then, execute those once connected onto the server:
+```bash
+bash configurate.sh
+```
+
+Thus, the server is ready!
 
 ## License
 Pimous Servers (Organization, Scripts and Docker files)  
