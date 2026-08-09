@@ -19,8 +19,8 @@ services:
     networks:
       net-www:
         ipv4_address: 172.31.0.131
-    ports:
-      - "31001:80"
+        aliases:
+          - fallback.s0.pimous.local
 
     restart: unless-stopped
 

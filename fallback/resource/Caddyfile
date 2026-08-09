@@ -4,12 +4,11 @@
 	log default {
 		output stdout
 		format console
-		level DEBUG
+		level INFO
 	}
 
 	servers :80 {
 		name "Fallback"
-    	trace
 	}
 
 	auto_https off
@@ -38,14 +37,14 @@
 	@exist {
 		not vars "{folder}" "whereami"
 		file {
-    		try_files "{folder}/"
+			try_files "{folder}/"
 		}
 	}
 	handle @exist {
 		@file-server vars "{handler}" "file_server"
 		handle @file-server {
 			file_server {
-				root "{vars.root}/{folder}/{vars.relPublicDir}"
+				root "{http.vars.root}/{folder}/{http.vars.relPublicDir}"
 			}
 		}
 	}
@@ -53,7 +52,7 @@
 		rewrite ?path={http.request.uri}&{query}
 
 		file_server {
-			root "{vars.root}/whereami/{vars.relPublicDir}"
+			root "{http.vars.root}/{folder}/{http.vars.relPublicDir}"
 			status 503
 		}
 	}

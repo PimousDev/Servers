@@ -17,7 +17,6 @@
 FROM caddy:2.11.2-builder-alpine AS builder
 
 RUN xcaddy build \
-	--with github.com/caddyserver/jsonc-adapter \
 	--with github.com/caddy-dns/infomaniak
 
 FROM caddy:2.11.2-alpine
@@ -36,6 +35,4 @@ RUN chown -R $CYUSER:$CYUSER $XDG_CONFIG_HOME $XDG_DATA_HOME $CYROOT
 
 USER $CYUSER
 
-CMD ["sh", "-c", \
-	"caddy run --config /caddyFile --adapter jsonc" \
-]
+CMD ["caddy", "run", "--config", "/caddyFile"]

@@ -1,0 +1,63 @@
+{
+	admin off
+
+	log default {
+		output stdout
+		format console
+		level INFO
+	}
+
+	servers :443 {
+		name "Reproxy"
+
+		listener_wrappers {
+			http_redirect
+			tls
+		}
+	}
+
+	email pro@pimous.dev
+}
+
+*.pimous.dev, pimous.dev {
+	log default
+
+	tls "pro@pimous.dev" {
+		dns infomaniak "{file./run/secrets/dnsApiToken}"
+	}
+
+	# Some pre-treatments
+	vars serverName "Pimous Dev. Reproxy"
+
+	map "{http.request.host}" "{service}" "{servicePort}" {
+		container.pimous.dev "container" 9000
+		default "fallback" 80
+	}
+
+	header >Via "{http.vars.serverName}"
+
+	# Output
+	# wordsrain websocket server reverse proxy
+	@wordsrainWS {
+		host wordsrain.pimous.dev
+		path /socket.io/*
+	}
+	handle @wordsrainWS {
+		reverse_proxy s0.net.pimous.dev:31091
+	}
+
+	# pimous.dev reverse proxy
+	handle {
+		reverse_proxy {
+			dynamic a {
+				name "{service}.s0.pimous.local"
+				port "{servicePort}"
+				versions ipv4
+			}
+		}
+	}
+
+	handle_errors {
+		header >Server "{http.vars.serverName}"
+	}
+}

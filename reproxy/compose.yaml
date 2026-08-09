@@ -40,7 +40,7 @@ secrets:
 configs:
   caddyFile:
     name: ps_cnf_www-reproxy_config
-    file: resource/Caddyfile.jsonc
+    file: resource/Caddyfile
 
 networks:
   net-www:
