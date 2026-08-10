@@ -49,10 +49,10 @@
 		}
 	}
 	handle {
-		rewrite ?path={http.request.uri}&{query}
+		rewrite ?fallback_service={folder}&{query}
 
 		file_server {
-			root "{http.vars.root}/{folder}/{http.vars.relPublicDir}"
+			root "{http.vars.root}/whereami/{http.vars.relPublicDir}"
 			status 503
 		}
 	}
