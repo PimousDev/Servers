@@ -31,6 +31,7 @@
 
 	map "{http.request.host}" "{service}" "{servicePort}" {
 		container.pimous.dev "container" 9000
+		~(?:.+\.)?fbm\.style$ "fbmstyle" 80
 		default "fallback" 80
 	}
 
@@ -55,6 +56,28 @@
 				versions ipv4
 			}
 		}
+	}
+
+	handle_errors {
+		header >Server "{http.vars.serverName}"
+	}
+}
+
+*.fbm.style, fbm.style {
+	log default
+
+	tls "pro@fbm.style" {
+		dns infomaniak "{file./run/secrets/dnsApiToken}"
+	}
+
+	# Some pre-treatments
+	vars serverName "Pimous Dev. Reproxy"
+
+	header >Via "{http.vars.serverName}"
+
+	# Output
+	handle {
+		reverse_proxy fbmstyle.s0.pimous.local:80
 	}
 
 	handle_errors {
