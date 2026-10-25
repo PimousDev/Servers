@@ -4,7 +4,7 @@ services:
   fallback:
     container_name: ps_con_www-fbmcoiffure_ws
 
-    image: fbmcoiffure/ws:1.0.0-b.2-alpine
+    image: fbmcoiffure/ws:1.0.0-b.3-alpine
 
     networks:
       net-www:
