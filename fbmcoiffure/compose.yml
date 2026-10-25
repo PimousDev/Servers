@@ -1,16 +1,16 @@
-name: ps_prj_www-fbmstyle
+name: ps_prj_www-fbmcoiffure
 
 services:
   fallback:
-    container_name: ps_con_www-fbmstyle_ws
+    container_name: ps_con_www-fbmcoiffure_ws
 
-    image: fbmstyle/ws:1.0.0-b.0-alpine
+    image: fbmcoiffure/ws:1.0.0-b.2-alpine
 
     networks:
       net-www:
         ipv4_address: 172.31.0.135
         aliases:
-          - fbmstyle.s0.pimous.local
+          - fbmcoiffure.s0.pimous.local
 
     restart: unless-stopped
 

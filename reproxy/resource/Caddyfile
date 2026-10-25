@@ -31,7 +31,6 @@
 
 	map "{http.request.host}" "{service}" "{servicePort}" {
 		container.pimous.dev "container" 9000
-		~(?:.+\.)?fbm\.style$ "fbmstyle" 80
 		default "fallback" 80
 	}
 
@@ -77,7 +76,7 @@
 
 	# Output
 	handle {
-		reverse_proxy fbmstyle.s0.pimous.local:80
+		reverse_proxy fbmcoiffure.s0.pimous.local:80
 	}
 
 	handle_errors {
