@@ -80,7 +80,7 @@ setupPartition(){
 	mount "$part" "$mountPoint"
 
 	printf "PARTUUID=%s %s %s noatime,nodiratime 0 2\n" \
-			"$(blkid -t LABEL="$label" -s PARTUUID -o value "$part")" \
+			"$(blkid -s PARTUUID -o value "$part")" \
 			"$mountPoint" \
 			"$format" \
 		>> /etc/fstab
